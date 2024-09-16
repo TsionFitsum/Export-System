@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function toggleDocumentaryCreditRequirement() {
+            const paymentTerm = document.querySelector('select[name="payment_term"]');
+            const documentaryCredit = document.querySelector('input[name="documentary_credit"]');
+            
+            if (paymentTerm.value === 'LC') {
+                documentaryCredit.setAttribute('required', 'required');
+            } else {
+                documentaryCredit.removeAttribute('required');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const paymentTerm = document.querySelector('select[name="payment_term"]');
+            paymentTerm.addEventListener('change', toggleDocumentaryCreditRequirement);
+        });
+    </script>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8">
+        <h2 class="text-2xl font-bold mb-20 text-center">Export Details Form</h2>
+        <form action="#" method="POST">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">No.</label>
+                    <input type="text" name="no" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Contract No.</label>
+                    <input type="text" name="contract_no" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Cert No.</label>
+                    <input type="text" name="cert_no" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Grade</label>
+                    <input type="text" name="grade" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Buyer</label>
+                    <input type="text" name="buyer" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Invoice Value Amount (USD)</label>
+                    <input type="number" step="0.01" name="invoice_value" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Payment Term</label>
+                    <select name="payment_term" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                        <option value="TT">TT</option>
+                        <option value="LD">LC</option>
+                        <option value="CAD">CAD</option>
+                    </select>
+                </div>
+                
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Documentary Credit Number</label>
+                    <input type="text" name="documentary_credit" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Bags</label>
+                    <input type="number" name="bags" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">MTS</label>
+                    <input type="number" name="mts" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">FCL</label>
+                    <input type="text" name="fcl" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">CLU Inspected Date</label>
+                    <input type="date" name="clu_inspected_date" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">CLU Result</label>
+                    <select name="clu_result" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                        <option value="fit">Fit</option>
+                        <option value="unfit">Unfit</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Destination</label>
+                    <input type="text" name="destination" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Permit No.</label>
+                    <input type="text" name="permit_no" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">LPCO number</label>
+                    <input type="text" name="lpco" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Shipping Line</label>
+                    <select name="shipping_line" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                        <option value="MSC">MSC</option>
+                        <option value="CMA CGM">CMA CGM</option>
+                        <option value="MAERSK">MAERSK</option>
+                        <option value="Ethiopian Shipping Line">Ethiopian Shipping Line</option>
+                        <option value="PIL">PIL</option>
+                        <option value="HAPAG">HAPAG</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">PSS Sample Date</label>
+                    <input type="date" name="pss_sample_date" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">PSS Sample Result Date</label>
+                    <input type="date" name="pss_sample_result_date" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">PSS Result</label>
+                    <select name="pss_result" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                        <option value="fit">Fit</option>
+                        <option value="unfit">Unfit</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Booking No.</label>
+                    <input type="text" name="booking_no" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Container No.</label>
+                    <input type="text" name="container_no" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Seal No.</label>
+                    <input type="text" name="seal_no" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="photo_upload">Upload Photo</label>
+                        <input type="file" name="photo_upload" id="photo_upload" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" accept="image/*" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Date Loaded From WH</label>
+                    <input type="date" name="date_loaded_from_wh" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Transitor Name</label>
+                    <input type="text" name="transitor_name" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Transitor Operation Number</label>
+                    <input type="number" name="transitor_operation_number" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Insurance Company</label>
+                    <input type="text" name="insurance_company" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Insurance Amount</label>
+                    <input type="number" name="insurance_amount" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Wagon Number</label>
+                    <input type="number" name="wagon_number" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Driver Phone Number</label>
+                    <input type="number" name="driver_phone_number" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Djibouti Forwarder</label>
+                    <input type="text" name="djibouti_forwarder" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Djibouti Forwarder Contact</label>
+                    <input type="text" name="djibouti_forwarder_contact" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Vessel Date</label>
+                    <input type="date" name="vessel_date" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Vessel Name</label>
+                    <input type="text" name="vessel_name" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Bill No</label>
+                    <input type="number" name="bill_no" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Date Recieved OBL</label>
+                    <input type="date" name="date_recieved_obl" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Date Docs Sent To Bank</label>
+                    <input type="date" name="date_docs_sent_to_bank" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Date Credit Advice Recieved</label>
+                    <input type="date" name="date_credit_advice_recieved" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Payment Status</label>
+                    <input type="text" name="payment_status" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Amount Setteled</label>
+                    <input type="number" name="amount_settled" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Bank</label>
+                    <input type="text" name="bank" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">ECD Number</label>
+                    <input type="number" name="ecd_number" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Status</label>
+                    <input type="text" name="status" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Remark</label>
+                    <input type="text" name="remark" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                </div>
+                
+                
+            </div>
+            
+            <div class="mt-6 text-center">
+                <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg hover:bg-blue-700">
+                    Submit
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
