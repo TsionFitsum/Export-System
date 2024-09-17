@@ -93,6 +93,10 @@
                     <label class="block text-gray-700 font-bold mb-2" for="seal_image">Upload Payment Reciept Image</label>
                     <input type="file" name="seal_image" id="seal_image" accept="image/*" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm">
                 </div>
+                <div id="upload_section1" class="mt-4 hidden">
+                    <label class="block text-gray-700 font-bold mb-2" for="undertaking_image">Upload Undertaking</label>
+                    <input type="file" name="undetaking_image" id="undertaking_image" accept="image/*" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm">
+                </div>
                 
                 
                 
@@ -493,9 +497,9 @@
     <script>
         document.getElementById('payment_term').addEventListener('change', function() {
             var paymentTerm = this.value;
-            var uploadSection = document.getElementById('upload_section');
+            var uploadSection = document.getElementById('upload_section1');
     
-            if (paymentTerm === 'TT') {
+            if (paymentTerm === 'CAD') {
                 uploadSection.classList.remove('hidden');
             } else {
                 uploadSection.classList.add('hidden');
