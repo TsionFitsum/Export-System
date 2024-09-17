@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form</title>
+    <style>
+        /* Optional: Add some styling to hide the comment field initially */
+        .hidden {
+            display: none;
+        }
+    </style>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         function toggleDocumentaryCreditRequirement() {
@@ -22,248 +28,491 @@
             paymentTerm.addEventListener('change', toggleDocumentaryCreditRequirement);
         });
     </script>
+    
 </head>
 <body class="bg-gray-100 p-6">
     <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8">
         <h2 class="text-2xl font-bold mb-20 text-center">Export Details Form</h2>
         <form action="#" method="POST">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- First pair of inputs -->
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">No.</label>
-                    <input type="text" name="no" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="no" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
-
+                
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Contract No.</label>
-                    <input type="text" name="contract_no" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="contract_no" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <!-- Horizontal rule after first pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
                 </div>
 
+                <!-- Second pair of inputs -->
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Cert No.</label>
-                    <input type="text" name="cert_no" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="cert_no" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
-
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Grade</label>
-                    <input type="text" name="grade" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="grade" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <!-- Horizontal rule after second pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
                 </div>
 
+                <!-- Third pair of inputs -->
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Buyer</label>
-                    <input type="text" name="buyer" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="buyer" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
-
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Invoice Value Amount (USD)</label>
-                    <input type="number" step="0.01" name="invoice_value" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="number" step="0.01" name="invoice_value" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <!-- Horizontal rule after third pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
                 </div>
 
+                <!-- Fourth pair of inputs -->
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Payment Term</label>
-                    <select name="payment_term" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <select name="payment_term" id="payment_term" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                        <option value=""></option>
                         <option value="TT">TT</option>
                         <option value="LD">LC</option>
                         <option value="CAD">CAD</option>
                     </select>
                 </div>
                 
-
+                <div id="upload_section" class="mt-4 hidden">
+                    <label class="block text-gray-700 font-bold mb-2" for="seal_image">Upload Payment Reciept Image</label>
+                    <input type="file" name="seal_image" id="seal_image" accept="image/*" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm">
+                </div>
+                
+                
+                
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Documentary Credit Number</label>
-                    <input type="text" name="documentary_credit" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="documentary_credit" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <!-- Horizontal rule after fourth pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
                 </div>
 
+                <!-- Third pair of inputs -->
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Bags</label>
-                    <input type="number" name="bags" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="bags" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
-
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">MTS</label>
-                    <input type="number" name="mts" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" step="0.01" name="mts" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <!-- Horizontal rule after third pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
                 </div>
 
-                <div>
+                 <!-- Third pair of inputs -->
+                 <div>
                     <label class="block text-gray-700 font-bold mb-2">FCL</label>
-                    <input type="text" name="fcl" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="fcl" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
-
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">CLU Inspected Date</label>
-                    <input type="date" name="clu_inspected_date" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" step="0.01" name="clu_inspected_date" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                </div>
+
+
+
+                <!-- Horizontal rule after third pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
                 </div>
 
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">CLU Result</label>
-                    <select name="clu_result" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
-                        <option value="fit">Fit</option>
+                    <select name="clu_result" id="clu_result" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                        
+                        <option value="Fit">Fit</option>
                         <option value="unfit">Unfit</option>
+                        
                     </select>
                 </div>
-
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Destination</label>
-                    <input type="text" name="destination" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" step="0.01" name="destination" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <!-- Horizontal rule after third pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
+                </div>
+
+
+
+                
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Permit Number</label>
+                    <input type="text" name="permit_number" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">LPCO Number</label>
+                    <input type="text" step="0.01" name="lpco_number" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <!-- Horizontal rule after third pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
                 </div>
 
                 <div>
-                    <label class="block text-gray-700 font-bold mb-2">Permit No.</label>
-                    <input type="text" name="permit_no" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
-                </div>
-
-                <div>
-                    <label class="block text-gray-700 font-bold mb-2">LPCO number</label>
-                    <input type="text" name="lpco" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
-                </div>
-
-                <div>
-                    <label class="block text-gray-700 font-bold mb-2">Shipping Line</label>
-                    <select name="shipping_line" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <label class="block text-gray-700 font-bold mb-2" for="shipping_line">Shipping Line</label>
+                    <select name="shipping_line" id="shipping_line" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                        
                         <option value="MSC">MSC</option>
                         <option value="CMA CGM">CMA CGM</option>
                         <option value="MAERSK">MAERSK</option>
-                        <option value="Ethiopian Shipping Line">Ethiopian Shipping Line</option>
+                        <option value="ETHIOPIAN_SHIPPING_LINE">ETHIOPIAN SHIPPING LINE</option>
                         <option value="PIL">PIL</option>
                         <option value="HAPAG">HAPAG</option>
                     </select>
                 </div>
-
+                
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">PSS Sample Date</label>
-                    <input type="date" name="pss_sample_date" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" step="0.01" name="lpco_number" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                </div>
+                
+
+                <!-- Horizontal rule after third pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
                 </div>
 
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">PSS Sample Result Date</label>
-                    <input type="date" name="pss_sample_result_date" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="pss_sample_result_date" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
-
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">PSS Result</label>
-                    <select name="pss_result" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
-                        <option value="fit">Fit</option>
-                        <option value="unfit">Unfit</option>
+                    
+                    <select name="pss_result" id="pss_result" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                        <option value="Fit">Fit</option>
+                        <option value="Unfit">Unfit</option>
                     </select>
+                    
+                    <!-- Comment field, initially hidden -->
+                    <div id="comment_container" class="hidden mt-4">
+                        <label for="pss_comment" class="block text-gray-700 font-bold mb-2">Comment</label>
+                        <textarea id="pss_comment" name="pss_comment" rows="4" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm"></textarea>
+                    </div>
+                </div>
+                <!-- Horizontal rule after third pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
                 </div>
 
-                <div>
-                    <label class="block text-gray-700 font-bold mb-2">Booking No.</label>
-                    <input type="text" name="booking_no" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
-                </div>
+
+               
 
                 <div>
-                    <label class="block text-gray-700 font-bold mb-2">Container No.</label>
-                    <input type="text" name="container_no" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2" for="photo_upload">Upload Photo</label>
-                        <input type="file" name="photo_upload" id="photo_upload" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" accept="image/*" required>
+                    <label class="block text-gray-700 font-bold mb-2">Booking Number</label>
+                    <input type="text" name="booking_number" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                    <div class="mt-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="seal_image">Upload Booking Confirmation</label>
+                        <input type="file" name="booking_confirmation_image" id="booking_confirmation_image" accept="image/*" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm">
                     </div>
                 
                 </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Container Number</label>
+                    <input type="text" step="0.01" name="container_number" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                
+                    <div class="mt-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="seal_image">Upload Container Image</label>
+                        <input type="file" name="container_image" id="container_image" accept="image/*" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm">
+                    </div>
+                
+                </div>
+                <!-- Horizontal rule after third pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
+                </div>
+
 
                 <div>
-                    <label class="block text-gray-700 font-bold mb-2">Seal No.</label>
-                    <input type="text" name="seal_no" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-2" for="photo_upload">Upload Photo</label>
-                        <input type="file" name="photo_upload" id="photo_upload" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" accept="image/*" required>
+                    <label class="block text-gray-700 font-bold mb-2">Seal Number</label>
+                    <input type="text" name="seal_number" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                
+                    <div class="mt-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="seal_image">Upload Seal Image</label>
+                        <input type="file" name="seal_image" id="seal_image" accept="image/*" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm">
                     </div>
                 </div>
-
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Date Loaded From WH</label>
-                    <input type="date" name="date_loaded_from_wh" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" step="0.01" name="date_loaded_from_wh" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
+                <!-- Horizontal rule after third pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
+                </div>
+
+
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Transitor Name</label>
-                    <input type="text" name="transitor_name" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="transitor_name" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                    <div class="mt-4">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-bold mb-2" for="railway_bill_image">Upload Railway Bill</label>
+                            <input type="file" name="railway_bill_image" id="railway_bill_image" accept="image/*" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm">
+                        </div>
+                    
+                        <div class="mb-4 ml-10">
+                            <label class="block text-gray-700 font-bold mb-2" for="payment_receipt_image">Upload Payment Receipt</label>
+                            <input type="file" name="payment_receipt_image" id="payment_receipt_image" accept="image/*" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                        </div>
+                    
+                        <div class="mb-4 ml-10">
+                            <label class="block text-gray-700 font-bold mb-2" for="wagon_number">Wagon Number</label>
+                            <input type="text" name="wagon_number" id="wagon_number" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                        </div>
+                    </div>
+                    
+
+                    <div class="mt-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="trackway_bill_image">Upload Trackway bill</label>
+                        <input type="file" name="trackway_bill_image" id="trackway_bill_image" accept="image/*" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm">
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="nb_contract_image">Upload NB Contract</label>
+                        <input type="file" name="nb_contract_image" id="nb_contract_image" accept="image/*" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm">
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="commercial_invoice_image">Upload Commercial Invoice</label>
+                        <input type="file" name="commercial_invoice_image" id="commercial_invoice_image" accept="image/*" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm">
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="pl_image">Upload PL</label>
+                        <input type="file" name="pl_image" id="pl_image" accept="image/*" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm">
+                    </div>
+                    <div class="mt-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="vgm_image">Upload VGM</label>
+                        <input type="file" name="vgm_image" id="vgm_image" accept="image/*" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm">
+                    </div>
+                
+                
                 </div>
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Transitor Operation Number</label>
-                    <input type="number" name="transitor_operation_number" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" step="0.01" name="transitor_operation_number" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
+                <!-- Horizontal rule after third pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
+                </div>
+
+
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Insurance Company</label>
-                    <input type="text" name="insurance_company" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="insurance_company" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Insurance Amount</label>
-                    <input type="number" name="insurance_amount" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" step="0.01" name="insurance_amount" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
+                <!-- Horizontal rule after third pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
+                </div>
+
+
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Wagon Number</label>
-                    <input type="number" name="wagon_number" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="wagon_number" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
                 <div>
+                    <label class="block text-gray-700 font-bold mb-2">Truck / Train Plate Number</label>
+                    <input type="text" step="0.01" name="truck_or_train_plate_number" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <!-- Horizontal rule after third pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
+                </div>
+
+
+
+                <div>
                     <label class="block text-gray-700 font-bold mb-2">Driver Phone Number</label>
-                    <input type="number" name="driver_phone_number" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="driver_phone_number" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Djibouti Forwarder</label>
-                    <input type="text" name="djibouti_forwarder" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" step="0.01" name="djibouti_forwarder" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
+                <!-- Horizontal rule after third pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
+                </div>
+
+
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Djibouti Forwarder Contact</label>
-                    <input type="text" name="djibouti_forwarder_contact" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="djibouti_forwarder_contact" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Vessel Date</label>
-                    <input type="date" name="vessel_date" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" step="0.01" name="vessel_date" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
+                <!-- Horizontal rule after third pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
+                </div>
+
+
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Vessel Name</label>
-                    <input type="text" name="vessel_name" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="vessel_name" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Bill No</label>
-                    <input type="number" name="bill_no" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" step="0.01" name="bill_no" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
+                <!-- Horizontal rule after third pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
+                </div>
+
+
+
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Date Recieved OBL</label>
-                    <input type="date" name="date_recieved_obl" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="vessel_name" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Date Docs Sent To Bank</label>
-                    <input type="date" name="date_docs_sent_to_bank" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" step="0.01" name="bill_no" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                </div>
+                <!-- Horizontal rule after third pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
+                </div>
+
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Docs AWB Number</label>
+                    <input type="text" name="docs_awb_number" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
                 <div>
-                    <label class="block text-gray-700 font-bold mb-2">Date Credit Advice Recieved</label>
-                    <input type="date" name="date_credit_advice_recieved" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <label class="block text-gray-700 font-bold mb-2">Date credit Advice Recieved</label>
+                    <input type="text" step="0.01" name="date_credit_advice_recieved" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
+                <!-- Horizontal rule after third pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
+                </div>
+
+
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Payment Status</label>
-                    <input type="text" name="payment_status" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="payment_status" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
                 <div>
-                    <label class="block text-gray-700 font-bold mb-2">Amount Setteled</label>
-                    <input type="number" name="amount_settled" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <label class="block text-gray-700 font-bold mb-2">Amount Settled</label>
+                    <input type="text" step="0.01" name="amount_settled" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
+
+
+                <!-- Horizontal rule after third pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
+                </div>
+
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Bank</label>
-                    <input type="text" name="bank" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="bank" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">ECD Number</label>
-                    <input type="number" name="ecd_number" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" step="0.01" name="ecd_number" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
+               
+
+
+
+                 <!-- Horizontal rule after third pair -->
+                 <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
+                </div>
+
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Status</label>
-                    <input type="text" name="status" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="status" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Remark</label>
-                    <input type="text" name="remark" class="w-full border-gray-300 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" step="0.01" name="remark" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
-                
-                
-            </div>
-            
-            <div class="mt-6 text-center">
-                <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg hover:bg-blue-700">
-                    Submit
-                </button>
+                <!-- Horizontal rule after third pair -->
+                <div class="col-span-2">
+                    <hr class="my-4 border-t-2 border-gray-300">
+                </div>
+
+                <div class="mt-6 text-center">
+                    <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg hover:bg-blue-700">
+                        Submit
+                    </button>
+                </div>
+
+                <!-- Repeat similar structure for the rest of the form fields -->
+                <!-- For brevity, only a few pairs are shown here, you can continue this for other fields -->
+
             </div>
         </form>
     </div>
+    <script>
+        document.getElementById('payment_term').addEventListener('change', function() {
+            var paymentTerm = this.value;
+            var uploadSection = document.getElementById('upload_section');
+    
+            if (paymentTerm === 'TT') {
+                uploadSection.classList.remove('hidden');
+            } else {
+                uploadSection.classList.add('hidden');
+            }
+        }); 
+    </script>
+    <script>
+        document.getElementById('payment_term').addEventListener('change', function() {
+            var paymentTerm = this.value;
+            var uploadSection = document.getElementById('upload_section');
+    
+            if (paymentTerm === 'TT') {
+                uploadSection.classList.remove('hidden');
+            } else {
+                uploadSection.classList.add('hidden');
+            }
+        }); 
+    </script>
+
+    <script>
+        // JavaScript to toggle the comment field visibility
+        document.getElementById('pss_result').addEventListener('change', function() {
+            var commentContainer = document.getElementById('comment_container');
+            if (this.value === 'Unfit') {
+                commentContainer.classList.remove('hidden');
+            } else {
+                commentContainer.classList.add('hidden');
+            }
+        });
+    </script>
 </body>
 </html>
