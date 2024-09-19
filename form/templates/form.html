@@ -33,7 +33,7 @@
 <body class="bg-gray-100 p-6">
     <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8">
         <h2 class="text-2xl font-bold mb-20 text-center">Export Details Form</h2>
-        <form action="#" method="POST">
+        <form action="/submit" method="POST" enctype="multipart/form-data">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- First pair of inputs -->
                 <div>
@@ -90,12 +90,12 @@
                 </div>
                 
                 <div id="upload_section" class="mt-4 hidden">
-                    <label class="block text-gray-700 font-bold mb-2" for="seal_image">Upload Payment Reciept Image</label>
-                    <input type="file" name="seal_image" id="seal_image" accept="image/*" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm">
+                    <label class="block text-gray-700 font-bold mb-2" for="payment_recieptt_image">Upload Payment Reciept Image</label>
+                    <input type="file" name="payment_recieptt_image" id="payment_recieptt_image" accept="image/*" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm">
                 </div>
                 <div id="upload_section1" class="mt-4 hidden">
                     <label class="block text-gray-700 font-bold mb-2" for="undertaking_image">Upload Undertaking</label>
-                    <input type="file" name="undetaking_image" id="undertaking_image" accept="image/*" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm">
+                    <input type="file" name="undertaking_image" id="undertaking_image" accept="image/*" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm">
                 </div>
                 
                 
@@ -189,7 +189,7 @@
                 
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">PSS Sample Date</label>
-                    <input type="text" step="0.01" name="lpco_number" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" step="0.01" name="pss_sample_date" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
                 
 
@@ -228,7 +228,7 @@
                     <label class="block text-gray-700 font-bold mb-2">Booking Number</label>
                     <input type="text" name="booking_number" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                     <div class="mt-4">
-                        <label class="block text-gray-700 font-bold mb-2" for="seal_image">Upload Booking Confirmation</label>
+                        <label class="block text-gray-700 font-bold mb-2" for="booking_confirmation_image">Upload Booking Confirmation</label>
                         <input type="file" name="booking_confirmation_image" id="booking_confirmation_image" accept="image/*" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm">
                     </div>
                 
@@ -238,7 +238,7 @@
                     <input type="text" step="0.01" name="container_number" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 
                     <div class="mt-4">
-                        <label class="block text-gray-700 font-bold mb-2" for="seal_image">Upload Container Image</label>
+                        <label class="block text-gray-700 font-bold mb-2" for="container_image">Upload Container Image</label>
                         <input type="file" name="container_image" id="container_image" accept="image/*" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm">
                     </div>
                 
@@ -399,11 +399,11 @@
 
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Date Recieved OBL</label>
-                    <input type="text" name="vessel_name" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="date_received_obl" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Date Docs Sent To Bank</label>
-                    <input type="text" step="0.01" name="bill_no" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" step="0.01" name="date_docs_sent_to_bank" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
                 <!-- Horizontal rule after third pair -->
                 <div class="col-span-2">
@@ -417,10 +417,10 @@
                 </div>
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Date credit Advice Recieved</label>
-                    <input type="text" step="0.01" name="date_credit_advice_recieved" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" step="0.01" name="date_credit_advice_received" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
                 <!-- Horizontal rule after third pair -->
-                <div class="col-span-2">
+                <div class="col-span-2"> 
                     <hr class="my-4 border-t-2 border-gray-300">
                 </div>
 
