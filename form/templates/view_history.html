@@ -1,0 +1,13 @@
+<h1>History for {{ form_data.no }}</h1>
+<p>Current Status: {{ form_data.status }}</p>
+
+<h2>Form Data History</h2>
+<ul>
+    {% for entry in history %}
+        <li>
+            <strong>Modified at:</strong> {{ entry.modified_at }}<br>
+            <strong>Full Data Snapshot:</strong><br>
+            <pre>{{ entry.old_data | safe }}</pre>  <!-- Display the full JSON data -->
+        </li>
+    {% endfor %}
+</ul>

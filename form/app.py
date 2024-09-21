@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 import os
+import json
+
 
 app = Flask(__name__)
 
@@ -76,6 +78,19 @@ class FormData(db.Model):
     def __repr__(self):
         return f'<FormData {self.no}, {self.contract_no}>'
 
+
+
+class FormDataHistory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    form_data_id = db.Column(db.Integer, db.ForeignKey('form_data.id'), nullable=False)
+    old_data = db.Column(db.Text, nullable=False)  # Store the full form data as JSON
+    modified_at = db.Column(db.DateTime, nullable=False, default=db.func.now())  # Timestamp of change
+
+    def __repr__(self):
+        return f'<FormDataHistory {self.id} for FormData {self.form_data_id}>'
+
+
+
 # Route to display the form
 @app.route('/')
 def form():
@@ -84,23 +99,15 @@ def form():
 # Route to handle form submission
 @app.route('/submit', methods=['POST'])
 def submit():
-    # Retrieve form data
+    # Retrieve form data from the request
     no = request.form.get('no', '')
     contract_no = request.form.get('contract_no', '')
     cert_no = request.form.get('cert_no', '')
     grade = request.form.get('grade', '')
     buyer = request.form.get('buyer', '')
-    bags = request.form.get('bags', '')
     invoice_value = request.form.get('invoice_value', type=float)
     payment_term = request.form.get('payment_term', '')
-    pss_sample_date = request.form.get('pss_sample_date', '')
-    pss_sample_result_date = request.form.get('pss_sample_result_date', '')
-    pss_result = request.form.get('pss_result', '')
-    pss_comment = request.form.get('pss_comment', '')
-    booking_number = request.form.get('booking_number', '')
-    container_number = request.form.get('container_number', '')
-    seal_number = request.form.get('seal_number', '')
-    documentary_credit = request.form.get('documentary_credit', '')
+    bags = request.form.get('bags', '')
     mts = request.form.get('mts', '')
     fcl = request.form.get('fcl', '')
     clu_inspected_date = request.form.get('clu_inspected_date', '')
@@ -109,7 +116,13 @@ def submit():
     permit_number = request.form.get('permit_number', '')
     lpco_number = request.form.get('lpco_number', '')
     shipping_line = request.form.get('shipping_line', '')
-    
+    pss_sample_date = request.form.get('pss_sample_date', '')
+    pss_sample_result_date = request.form.get('pss_sample_result_date', '')
+    pss_result = request.form.get('pss_result', '')
+    pss_comment = request.form.get('pss_comment', '')
+    booking_number = request.form.get('booking_number', '')
+    container_number = request.form.get('container_number', '')
+    seal_number = request.form.get('seal_number', '')
     date_loaded_from_wh = request.form.get('date_loaded_from_wh', '')
     transitor_name = request.form.get('transitor_name', '')
     transitor_operation_number = request.form.get('transitor_operation_number', '')
@@ -132,7 +145,7 @@ def submit():
     ecd_number = request.form.get('ecd_number', '')
     status = request.form.get('status', '')
     remark = request.form.get('remark', '')
-    
+
     # Handle file uploads
     def save_file(file):
         if file:
@@ -141,90 +154,219 @@ def submit():
             return filename
         return None
 
-    railway_bill_filename = save_file(request.files.get('railway_bill_image'))
-    payment_receipt_filename = save_file(request.files.get('payment_receipt_image'))
-    trackway_bill_filename = save_file(request.files.get('trackway_bill_image'))
-    nb_contract_filename = save_file(request.files.get('nb_contract_image'))
-    commercial_invoice_filename = save_file(request.files.get('commercial_invoice_image'))
-    pl_filename = save_file(request.files.get('pl_image'))
-    vgm_filename = save_file(request.files.get('vgm_image'))
-    seal_filename = save_file(request.files.get('seal_image'))
-    undertaking_filename = save_file(request.files.get('undertaking_image'))
-    payment_recieptt_filename = save_file(request.files.get('payment_recieptt_image'))
-    booking_confirmation_filename = save_file(request.files.get('booking_confirmation_image'))
-    container_filename = save_file(request.files.get('container_image'))
-    
-    
-    # seal_filename = save_file(request.files.get('seal_image'))
-    # print(f"Seal image file path: {seal_filename}")  # Debugging
-    
-    # Create a new record and add it to the database
-    new_entry = FormData(
-        no=no,
-        contract_no=contract_no,
-        cert_no=cert_no,
-        grade=grade,
-        buyer=buyer,
-        bags=bags,
-        invoice_value=invoice_value,
-        payment_term=payment_term,
-        pss_sample_date=pss_sample_date,
-        pss_sample_result_date=pss_sample_result_date,
-        pss_result=pss_result,
-        pss_comment=pss_comment,
-        booking_number=booking_number,
-        container_number=container_number,
-        seal_number=seal_number,
-        date_loaded_from_wh=date_loaded_from_wh,
-        transitor_name=transitor_name,
-        transitor_operation_number=transitor_operation_number,
-        insurance_company=insurance_company,
-        insurance_amount=insurance_amount,
-        truck_or_train_plate_number=truck_or_train_plate_number,
-        driver_phone_number=driver_phone_number,
-        djibouti_forwarder=djibouti_forwarder,
-        djibouti_forwarder_contact=djibouti_forwarder_contact,
-        vessel_date=vessel_date,
-        vessel_name=vessel_name,
-        bill_no=bill_no,  
-        date_docs_sent_to_bank=date_docs_sent_to_bank,
-        docs_awb_number=docs_awb_number,
-        date_credit_advice_received=date_credit_advice_received,
-        payment_status=payment_status,
-        amount_settled=amount_settled,
-        bank=bank,
-        ecd_number=ecd_number,
-        status=status,
-        remark=remark,
-        documentary_credit=documentary_credit,
-        mts=mts,
-        fcl=fcl,
-        clu_inspected_date=clu_inspected_date,
-        clu_result=clu_result,
-        destination=destination,
-        permit_number=permit_number,
-        lpco_number=lpco_number,
-        shipping_line=shipping_line,
-        date_received_obl=date_received_obl,
-        
-        railway_bill_image=railway_bill_filename,
-        payment_receipt_image=payment_receipt_filename,
-        trackway_bill_image=trackway_bill_filename,
-        nb_contract_image=nb_contract_filename,
-        commercial_invoice_image=commercial_invoice_filename,
-        pl_image=pl_filename,
-        vgm_image=vgm_filename,
-        seal_image=seal_filename,
-        undertaking_image=undertaking_filename,
-        payment_recieptt_image=payment_recieptt_filename,
-        booking_confirmation_image=booking_confirmation_filename,
-        container_image=container_filename
-    )
+    seal_image = save_file(request.files.get('seal_image'))
+    undertaking_image = save_file(request.files.get('undertaking_image'))
+    documentary_credit = request.form.get('documentary_credit', '')
+    booking_confirmation_image = save_file(request.files.get('booking_confirmation_image'))
+    container_image = save_file(request.files.get('container_image'))
+    railway_bill_image = save_file(request.files.get('railway_bill_image'))
+    payment_receipt_image = save_file(request.files.get('payment_receipt_image'))
+    trackway_bill_image = save_file(request.files.get('trackway_bill_image'))
+    nb_contract_image = save_file(request.files.get('nb_contract_image'))
+    commercial_invoice_image = save_file(request.files.get('commercial_invoice_image'))
+    pl_image = save_file(request.files.get('pl_image'))
+    vgm_image = save_file(request.files.get('vgm_image'))
+    payment_recieptt_image = save_file(request.files.get('payment_recieptt_image'))
 
-    db.session.add(new_entry)
+    # Check if the form data already exists
+    form_data = FormData.query.filter_by(no=no).first()
+
+    if form_data:
+        # Create a snapshot of the existing data for history
+        old_data = {
+            'no': form_data.no,
+            'contract_no': form_data.contract_no,
+            'cert_no': form_data.cert_no,
+            'grade': form_data.grade,
+            'buyer': form_data.buyer,
+            'invoice_value': form_data.invoice_value,
+            'payment_term': form_data.payment_term,
+            'bags': form_data.bags,
+            'mts': form_data.mts,
+            'fcl': form_data.fcl,
+            'clu_inspected_date': form_data.clu_inspected_date,
+            'clu_result': form_data.clu_result,
+            'destination': form_data.destination,
+            'permit_number': form_data.permit_number,
+            'lpco_number': form_data.lpco_number,
+            'shipping_line': form_data.shipping_line,
+            'pss_sample_date': form_data.pss_sample_date,
+            'pss_sample_result_date': form_data.pss_sample_result_date,
+            'pss_result': form_data.pss_result,
+            'pss_comment': form_data.pss_comment,
+            'booking_number': form_data.booking_number,
+            'container_number': form_data.container_number,
+            'seal_number': form_data.seal_number,
+            'date_loaded_from_wh': form_data.date_loaded_from_wh,
+            'transitor_name': form_data.transitor_name,
+            'transitor_operation_number': form_data.transitor_operation_number,
+            'insurance_company': form_data.insurance_company,
+            'insurance_amount': form_data.insurance_amount,
+            'truck_or_train_plate_number': form_data.truck_or_train_plate_number,
+            'driver_phone_number': form_data.driver_phone_number,
+            'djibouti_forwarder': form_data.djibouti_forwarder,
+            'djibouti_forwarder_contact': form_data.djibouti_forwarder_contact,
+            'vessel_date': form_data.vessel_date,
+            'vessel_name': form_data.vessel_name,
+            'bill_no': form_data.bill_no,
+            'date_received_obl': form_data.date_received_obl,
+            'date_docs_sent_to_bank': form_data.date_docs_sent_to_bank,
+            'docs_awb_number': form_data.docs_awb_number,
+            'date_credit_advice_received': form_data.date_credit_advice_received,
+            'payment_status': form_data.payment_status,
+            'amount_settled': form_data.amount_settled,
+            'bank': form_data.bank,
+            'ecd_number': form_data.ecd_number,
+            'status': form_data.status,
+            'remark': form_data.remark,
+        }
+
+        # Log the old data to history
+        form_history = FormDataHistory(
+            form_data_id=form_data.id, 
+            old_data=json.dumps(old_data)
+        )
+        db.session.add(form_history)
+
+        # Update existing record with new values
+        form_data.contract_no = contract_no
+        form_data.cert_no = cert_no
+        form_data.grade = grade
+        form_data.buyer = buyer
+        form_data.invoice_value = invoice_value
+        form_data.payment_term = payment_term
+        form_data.bags = bags
+        form_data.mts = mts
+        form_data.fcl = fcl
+        form_data.clu_inspected_date = clu_inspected_date
+        form_data.clu_result = clu_result
+        form_data.destination = destination
+        form_data.permit_number = permit_number
+        form_data.lpco_number = lpco_number
+        form_data.shipping_line = shipping_line
+        form_data.pss_sample_date = pss_sample_date
+        form_data.pss_sample_result_date = pss_sample_result_date
+        form_data.pss_result = pss_result
+        form_data.pss_comment = pss_comment
+        form_data.booking_number = booking_number
+        form_data.container_number = container_number
+        form_data.seal_number = seal_number
+        form_data.date_loaded_from_wh = date_loaded_from_wh
+        form_data.transitor_name = transitor_name
+        form_data.transitor_operation_number = transitor_operation_number
+        form_data.insurance_company = insurance_company
+        form_data.insurance_amount = insurance_amount
+        form_data.truck_or_train_plate_number = truck_or_train_plate_number
+        form_data.driver_phone_number = driver_phone_number
+        form_data.djibouti_forwarder = djibouti_forwarder
+        form_data.djibouti_forwarder_contact = djibouti_forwarder_contact
+        form_data.vessel_date = vessel_date
+        form_data.vessel_name = vessel_name
+        form_data.bill_no = bill_no
+        form_data.date_received_obl = date_received_obl
+        form_data.date_docs_sent_to_bank = date_docs_sent_to_bank
+        form_data.docs_awb_number = docs_awb_number
+        form_data.date_credit_advice_received = date_credit_advice_received
+        form_data.payment_status = payment_status
+        form_data.amount_settled = amount_settled
+        form_data.bank = bank
+        form_data.ecd_number = ecd_number
+        form_data.status = status
+        form_data.remark = remark
+        form_data.seal_image = seal_image
+        form_data.undertaking_image = undertaking_image
+        form_data.documentary_credit = documentary_credit
+        form_data.booking_confirmation_image = booking_confirmation_image
+        form_data.container_image = container_image
+        form_data.railway_bill_image = railway_bill_image
+        form_data.payment_receipt_image = payment_receipt_image
+        form_data.trackway_bill_image = trackway_bill_image
+        form_data.nb_contract_image = nb_contract_image
+        form_data.commercial_invoice_image = commercial_invoice_image
+        form_data.pl_image = pl_image
+        form_data.vgm_image = vgm_image
+        form_data.payment_recieptt_image = payment_recieptt_image
+
+    else:
+        # Create a new form data entry
+        form_data = FormData(
+            no=no,
+            contract_no=contract_no,
+            cert_no=cert_no,
+            grade=grade,
+            buyer=buyer,
+            invoice_value=invoice_value,
+            payment_term=payment_term,
+            bags=bags,
+            mts=mts,
+            fcl=fcl,
+            clu_inspected_date=clu_inspected_date,
+            clu_result=clu_result,
+            destination=destination,
+            permit_number=permit_number,
+            lpco_number=lpco_number,
+            shipping_line=shipping_line,
+            pss_sample_date=pss_sample_date,
+            pss_sample_result_date=pss_sample_result_date,
+            pss_result=pss_result,
+            pss_comment=pss_comment,
+            booking_number=booking_number,
+            container_number=container_number,
+            seal_number=seal_number,
+            date_loaded_from_wh=date_loaded_from_wh,
+            transitor_name=transitor_name,
+            transitor_operation_number=transitor_operation_number,
+            insurance_company=insurance_company,
+            insurance_amount=insurance_amount,
+            truck_or_train_plate_number=truck_or_train_plate_number,
+            driver_phone_number=driver_phone_number,
+            djibouti_forwarder=djibouti_forwarder,
+            djibouti_forwarder_contact=djibouti_forwarder_contact,
+            vessel_date=vessel_date,
+            vessel_name=vessel_name,
+            bill_no=bill_no,
+            date_received_obl=date_received_obl,
+            date_docs_sent_to_bank=date_docs_sent_to_bank,
+            docs_awb_number=docs_awb_number,
+            date_credit_advice_received=date_credit_advice_received,
+            payment_status=payment_status,
+            amount_settled=amount_settled,
+            bank=bank,
+            ecd_number=ecd_number,
+            status=status,
+            remark=remark,
+            seal_image=seal_image,
+            undertaking_image=undertaking_image,
+            documentary_credit=documentary_credit,
+            booking_confirmation_image=booking_confirmation_image,
+            container_image=container_image,
+            railway_bill_image=railway_bill_image,
+            payment_receipt_image=payment_receipt_image,
+            trackway_bill_image=trackway_bill_image,
+            nb_contract_image=nb_contract_image,
+            commercial_invoice_image=commercial_invoice_image,
+            pl_image=pl_image,
+            vgm_image=vgm_image,
+            payment_recieptt_image=payment_recieptt_image
+        )
+        db.session.add(form_data)
+
     db.session.commit()
+    return redirect(url_for('success'))  # Change 'success' to your success endpoint
 
-    return redirect('/')
+
+@app.route('/history/<string:contract_no>', methods=['GET'])
+def view_history(contract_no):
+    history = FormDataHistory.query.filter_by(contract_no=contract_no).all()
+    
+    # Before passing the history data to the template, format the JSON data
+    for entry in history:
+        entry.old_data = json.dumps(json.loads(entry.old_data), indent=4)
+
+    return render_template('history.html', history=history)
+
+
+
 
 if __name__ == '__main__':
     with app.app_context():  # Ensure that app context is available
