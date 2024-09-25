@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Export Item</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+        form {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="file"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 80px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .file-upload {
+            margin-top: 10px;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <form method="POST" enctype="multipart/form-data">
+        <h2>Edit item {{form_data.contract_no}}</h2>
+        <label for="cert_no">Certificate No:</label>
+        <input type="text" name="cert_no" value="{{ form_data.cert_no }}" required>
+    
+        <label for="grade">Grade:</label>
+        <input type="text" name="grade" value="{{ form_data.grade }}" required>
+    
+        <label for="buyer">Buyer:</label>
+        <input type="text" name="buyer" value="{{ form_data.buyer }}" required>
+    
+        <label for="invoice_value">Invoice Value:</label>
+        <input type="number" name="invoice_value" value="{{ form_data.invoice_value }}" required>
+    
+        <label for="payment_term">Payment Term:</label>
+        <input type="text" name="payment_term" value="{{ form_data.payment_term }}" required>
+    
+        <label for="pss_sample_date">PSS Sample Date:</label>
+        <input type="text" name="pss_sample_date" value="{{ form_data.pss_sample_date }}" required>
+    
+        <label for="pss_sample_result_date">PSS Sample Result Date:</label>
+        <input type="text" name="pss_sample_result_date" value="{{ form_data.pss_sample_result_date }}" required>
+    
+        <label for="pss_result">PSS Result:</label>
+        <input type="text" name="pss_result" value="{{ form_data.pss_result }}" required>
+    
+        <label for="pss_comment">PSS Comment:</label>
+        <textarea name="pss_comment">{{ form_data.pss_comment }}</textarea>
+    
+        <label for="booking_number">Booking Number:</label>
+        <input type="text" name="booking_number" value="{{ form_data.booking_number }}" required>
+    
+        <label for="container_number">Container Number:</label>
+        <input type="text" name="container_number" value="{{ form_data.container_number }}" required>
+    
+        <label for="seal_number">Seal Number:</label>
+        <input type="text" name="seal_number" value="{{ form_data.seal_number }}" required>
+    
+        <label for="date_loaded_from_wh">Date Loaded from Warehouse:</label>
+        <input type="text" name="date_loaded_from_wh" value="{{ form_data.date_loaded_from_wh }}" required>
+    
+        <label for="transitor_name">Transitor Name:</label>
+        <input type="text" name="transitor_name" value="{{ form_data.transitor_name }}" required>
+    
+        <label for="transitor_operation_number">Transitor Operation Number:</label>
+        <input type="text" name="transitor_operation_number" value="{{ form_data.transitor_operation_number }}" required>
+    
+        <label for="insurance_company">Insurance Company:</label>
+        <input type="text" name="insurance_company" value="{{ form_data.insurance_company }}" required>
+    
+        <label for="insurance_amount">Insurance Amount:</label>
+        <input type="number" name="insurance_amount" value="{{ form_data.insurance_amount }}" required>
+    
+        <label for="truck_or_train_plate_number">Truck/Train Plate Number:</label>
+        <input type="text" name="truck_or_train_plate_number" value="{{ form_data.truck_or_train_plate_number }}" required>
+    
+        <label for="driver_phone_number">Driver Phone Number:</label>
+        <input type="text" name="driver_phone_number" value="{{ form_data.driver_phone_number }}" required>
+    
+        <label for="djibouti_forwarder">Djibouti Forwarder:</label>
+        <input type="text" name="djibouti_forwarder" value="{{ form_data.djibouti_forwarder }}" required>
+    
+        <label for="djibouti_forwarder_contact">Djibouti Forwarder Contact:</label>
+        <input type="text" name="djibouti_forwarder_contact" value="{{ form_data.djibouti_forwarder_contact }}" required>
+    
+        <label for="vessel_date">Vessel Date:</label>
+        <input type="text" name="vessel_date" value="{{ form_data.vessel_date }}" required>
+    
+        <label for="vessel_name">Vessel Name:</label>
+        <input type="text" name="vessel_name" value="{{ form_data.vessel_name }}" required>
+    
+        <label for="bill_no">Bill No:</label>
+        <input type="text" name="bill_no" value="{{ form_data.bill_no }}" required>
+    
+        <label for="date_received_obl">Date Received OBL:</label>
+        <input type="text" name="date_received_obl" value="{{ form_data.date_received_obl }}" required>
+    
+        <label for="date_docs_sent_to_bank">Date Docs Sent to Bank:</label>
+        <input type="text" name="date_docs_sent_to_bank" value="{{ form_data.date_docs_sent_to_bank }}" required>
+    
+        <label for="docs_awb_number">Docs AWB Number:</label>
+        <input type="text" name="docs_awb_number" value="{{ form_data.docs_awb_number }}" required>
+    
+        <label for="date_credit_advice_received">Date Credit Advice Received:</label>
+        <input type="text" name="date_credit_advice_received" value="{{ form_data.date_credit_advice_received }}" required>
+    
+        <label for="payment_status">Payment Status:</label>
+        <input type="text" name="payment_status" value="{{ form_data.payment_status }}" required>
+    
+        <label for="amount_settled">Amount Settled:</label>
+        <input type="number" name="amount_settled" value="{{ form_data.amount_settled }}" required>
+    
+        <label for="bank">Bank:</label>
+        <input type="text" name="bank" value="{{ form_data.bank }}" required>
+    
+        <label for="ecd_number">ECD Number:</label>
+        <input type="text" name="ecd_number" value="{{ form_data.ecd_number }}" required>
+    
+        <label for="status">Status:</label>
+        <input type="text" name="status" value="{{ form_data.status }}" required>
+    
+        <label for="remark">Remark:</label>
+        <input type="text" name="remark" value="{{ form_data.remark }}" required>
+    
+        <!-- File upload fields -->
+        <div>
+            <!-- Seal Image -->
+            <label for="seal_image">Seal Image:</label>
+            {% if form_data.seal_image %}
+    <span>{{ form_data.seal_image.split('/')[-1] }}</span> <!-- Display only the file name -->
+{% endif %}
+
+            <input type="file" name="seal_image">
+        </div>
+    
+        <div>
+            <!-- Undertaking Image -->
+            <label for="undertaking_image">Undertaking Image:</label>
+            {% if form_data.undertaking_image %}
+                <span>{{ form_data.undertaking_image.split('/')[-1] }}</span> <!-- Display only the file name -->
+            {% endif %}
+            <input type="file" name="undertaking_image">
+        </div>
+    
+        <div>
+            <!-- Documentary Credit -->
+            <label for="documentary_credit">Documentary Credit:</label>
+            {% if form_data.documentary_credit %}
+                <span>{{ form_data.documentary_credit.split('/')[-1] }}</span> <!-- Display only the file name -->
+            {% endif %}
+            <input type="file" name="documentary_credit">
+        </div>
+    
+        <div>
+            <!-- Railway Bill Image -->
+            <label for="railway_bill_image">Railway Bill Image:</label>
+            {% if form_data.railway_bill_image %}
+                <span>{{ form_data.railway_bill_image.split('/')[-1] }}</span> <!-- Display only the file name -->
+            {% endif %}
+            <input type="file" name="railway_bill_image">
+        </div>
+    
+        <div>
+            <!-- Payment Receipt Image -->
+            <label for="payment_receipt_image">Payment Receipt Image:</label>
+            {% if form_data.payment_receipt_image %}
+                <span>{{ form_data.payment_receipt_image.split('/')[-1] }}</span> <!-- Display only the file name -->
+            {% endif %}
+            <input type="file" name="payment_receipt_image">
+        </div>
+        <div>
+            <!-- Payment Receipt Image -->
+            <label for="trackway_bill_image">Trackway Bill Image:</label>
+            {% if form_data.trackway_bill_image %}
+                <span>{{ form_data.trackway_bill_image.split('/')[-1] }}</span> <!-- Display only the file name -->
+            {% endif %}
+            <input type="file" name="trackway_bill_image">
+        </div>
+
+        <div>
+            <!-- Payment Receipt Image -->
+            <label for="nb_contract_image">NB Contract Image:</label>
+            {% if form_data.nb_contract_image %}
+                <span>{{ form_data.nb_contract_image.split('/')[-1] }}</span> <!-- Display only the file name -->
+            {% endif %}
+            <input type="file" name="nb_contract_image">
+        </div>
+
+        
+    
+
+        <label for="nb_contract_image">NB Contract Image:</label>
+        <input type="file" name="nb_contract_image">
+    
+        <label for="commercial_invoice_image">Commercial Invoice Image:</label>
+        <input type="file" name="commercial_invoice_image">
+    
+        <label for="pl_image">PL Image:</label>
+        <input type="file" name="pl_image">
+    
+        <label for="vgm_image">VGM Image:</label>
+        <input type="file" name="vgm_image">
+    
+        <label for="payment_recieptt_image">Payment Receipt Image:</label>
+        <input type="file" name="payment_recieptt_image">
+    
+        <label for="booking_confirmation_image">Booking Confirmation Image:</label>
+        <input type="file" name="booking_confirmation_image">
+    
+        <label for="container_image">Container Image:</label>
+        <input type="file" name="container_image">
+    
+        <!-- Submit button -->
+        <input type="submit" value="Update">
+    </form>
+
+</body>
+</html>
