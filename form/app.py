@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, jsonify, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 import os
 import json  
@@ -10,7 +10,7 @@ from datetime import datetime
 app = Flask(__name__)
 
 # Configure the SQLite database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///formdataaa.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///formdataaam.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
@@ -94,10 +94,11 @@ class FormDataHistory(db.Model):
 
 
 
-@app.route('/list')
+@app.route('/list_items', methods=['GET'])
 def list_items():
-    items = FormData.query.all()  # Retrieve all items from the FormData table
+    items = FormData.query.all()  # Assuming FormData contains all your item details
     return render_template('list.html', items=items)
+
 
 
 
@@ -366,15 +367,40 @@ def submit():
     return redirect(url_for('list_items'))  # Change 'success' to your success endpoint
 
 
-@app.route('/history/<string:contract_no>', methods=['GET'])
+@app.route('/history/<string:contract_no>/json', methods=['GET'])
 def view_history(contract_no):
-    history = FormDataHistory.query.filter_by(contract_no=contract_no).all()
+    history = FormDataHistory.query.filter_by(contract_no=contract_no).order_by(FormDataHistory.modified_at.desc()).all()
     
-    # Before passing the history data to the template, format the JSON data
+    if not history:
+        return jsonify({"error": "No history found"})
+    
+    # Prepare history data for JSON response
+    history_data = []
     for entry in history:
-        entry.old_data = json.dumps(json.loads(entry.old_data), indent=4)
+        history_data.append({
+            "modified_at": entry.modified_at.strftime('%Y-%m-%d %H:%M:%S'),
+            "old_data": json.dumps(json.loads(entry.old_data), indent=4)  # Pretty-printing the JSON
+        })
 
-    return render_template('history.html', history=history)
+    return jsonify(history_data)
+
+
+
+@app.route('/history/<string:contract_no>/json', methods=['GET'])
+def view_history_json(contract_no):
+    history = FormDataHistory.query.filter_by(contract_no=contract_no).order_by(FormDataHistory.modified_at.desc()).all()
+    
+    if not history:
+        return jsonify({"error": "No history found"})
+    
+    history_data = []
+    for entry in history:
+        history_data.append({
+            "modified_at": entry.modified_at.strftime('%Y-%m-%d %H:%M:%S'),
+            "old_data": json.dumps(json.loads(entry.old_data), indent=4)
+        })
+
+    return jsonify(history_data)
 
 
 @app.route('/edit/<string:contract_no>', methods=['GET', 'POST'])

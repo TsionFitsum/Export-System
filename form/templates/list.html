@@ -4,36 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Item List</title>
+    <style>
+        .hidden { display: none; }
+    </style>
+    <script>
+        function toggleHistory(contractNo) {
+            var historyDiv = document.getElementById('history-' + contractNo);
+
+            if (historyDiv.classList.contains('hidden')) {
+                // Fetch history data via AJAX
+                fetch('/history/' + contractNo + '/json')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            historyDiv.innerHTML = '<p>No history found.</p>';
+                        } else {
+                            var historyHtml = '<ul>';
+                            data.forEach(item => {
+                                historyHtml += '<li><strong>' + item.modified_at + '</strong><pre>' + item.old_data + '</pre></li>';
+                            });
+                            historyHtml += '</ul>';
+                            historyDiv.innerHTML = historyHtml;
+                        }
+                        historyDiv.classList.remove('hidden');
+                    })
+                    .catch(error => {
+                        console.error('Error fetching history:', error);
+                        historyDiv.innerHTML = '<p>Error loading history data.</p>';
+                    });
+            } else {
+                historyDiv.classList.add('hidden');  // Collapse if already open
+            }
+        }
+    </script>
 </head>
 <body>
-    <h1>Item List</h1>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Contract No</th>
-                <th>Buyer</th>
-                <th>Invoice Value</th>
-                <th>Seal Image</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in items %}
-            <tr>
-                <td>{{ item.no }}</td>
-                <td>{{ item.contract_no }}</td>
-                <td>{{ item.buyer }}</td>
-                <td>{{ item.invoice_value }}</td>
-                <td>{{ item.seal_image }}</td>
-                <td>{{ item.status }}</td>
-                <td>
-                    <a href="{{ url_for('edit_item', contract_no=item.contract_no) }}">Edit</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+
+<h1>Item List</h1>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Contract No</th>
+            <th>Buyer</th>
+            <th>Invoice Value</th>
+            <th>Seal Image</th>
+            <th>Status</th>
+            <th>Action</th>
+            <th>History</th> <!-- Added column for the history toggle -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.no }}</td>
+            <td>{{ item.contract_no }}</td>
+            <td>{{ item.buyer }}</td>
+            <td>{{ item.invoice_value }}</td>
+            <td>{{ item.seal_image }}</td>
+            <td>{{ item.status }}</td>
+            <td><a href="{{ url_for('edit_item', contract_no=item.contract_no) }}">Edit</a></td>
+            <td>
+                <button onclick="toggleHistory('{{ item.contract_no }}')">Toggle History</button>
+                <div id="history-{{ item.contract_no }}" class="hidden">
+                    <!-- History will be loaded here dynamically -->
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 </body>
 </html>
