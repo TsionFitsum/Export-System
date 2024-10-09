@@ -369,38 +369,60 @@ def submit():
 
 @app.route('/history/<string:contract_no>/json', methods=['GET'])
 def view_history(contract_no):
-    history = FormDataHistory.query.filter_by(contract_no=contract_no).order_by(FormDataHistory.modified_at.desc()).all()
-    
-    if not history:
-        return jsonify({"error": "No history found"})
-    
-    # Prepare history data for JSON response
-    history_data = []
-    for entry in history:
-        history_data.append({
-            "modified_at": entry.modified_at.strftime('%Y-%m-%d %H:%M:%S'),
-            "old_data": json.dumps(json.loads(entry.old_data), indent=4)  # Pretty-printing the JSON
-        })
+    try:
+        history = FormDataHistory.query.filter_by(contract_no=contract_no).order_by(FormDataHistory.modified_at.desc()).all()
+        if not history:
+            return jsonify({"error": "No history found"})
+        
+        # Prepare history data for JSON response
+        history_data = []
+        for entry in history:
+            history_data.append({
+                "modified_at": entry.modified_at.strftime('%Y-%m-%d %H:%M:%S'),
+                "old_data": json.loads(entry.old_data)  # Ensure this is parsed correctly
+            })
+        
+        return jsonify(history_data)
+    except Exception as e:
+        print(f"Error fetching history for {contract_no}: {e}")
+        return jsonify({"error": "An error occurred while fetching history."}), 500
 
-    return jsonify(history_data)
+
+
+
+
+
+
 
 
 
 @app.route('/history/<string:contract_no>/json', methods=['GET'])
 def view_history_json(contract_no):
-    history = FormDataHistory.query.filter_by(contract_no=contract_no).order_by(FormDataHistory.modified_at.desc()).all()
+    # Find the form_data record that corresponds to the provided contract_no
+    form_data = FormData.query.filter_by(contract_no=contract_no).first()
     
-    if not history:
-        return jsonify({"error": "No history found"})
+    if not form_data:
+        # Return an error if no form_data found with that contract_no
+        return jsonify({"error": "No form data found for the given contract number"}), 404
     
+    # Now fetch the history using form_data_id
+    history_entries = FormDataHistory.query.filter_by(form_data_id=form_data.id).order_by(FormDataHistory.modified_at.desc()).all()
+    
+    if not history_entries:
+        return jsonify({"error": "No history found for this contract"}), 404
+    
+    # Format the history data for the response
     history_data = []
-    for entry in history:
+    for entry in history_entries:
         history_data.append({
-            "modified_at": entry.modified_at.strftime('%Y-%m-%d %H:%M:%S'),
-            "old_data": json.dumps(json.loads(entry.old_data), indent=4)
+            "modified_at": entry.modified_at.strftime('%Y-%m-%d %H:%M:%S'),  # Format timestamp
+            "old_data": json.dumps(json.loads(entry.old_data), indent=4)  # Pretty-print old data
         })
-
+    
+    # Return the formatted history data as a JSON response
     return jsonify(history_data)
+
+
 
 
 @app.route('/edit/<string:contract_no>', methods=['GET', 'POST'])
