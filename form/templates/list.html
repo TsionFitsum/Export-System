@@ -9,32 +9,63 @@
         .history-row {
             background-color: #f1f1f1;
         }
+        .history-row ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .history-row li {
+            margin-bottom: 10px;
+        }
         .previous-value {
             font-style: italic;
             color: #666;
         }
     </style>
     <script>
-        function fetchHistory(contractNo) {
-            // Fetch history data via AJAX
-            fetch('/history/' + contractNo + '/json')
-                .then(response => response.json())
-                .then(data => {
-                    var historyHtml = '';
-                    if (data.error) {
-                        historyHtml = '<p>No history found.</p>';
-                    } else {
-                        data.forEach(item => {
-                            historyHtml += '<div><strong>' + item.modified_at + ':</strong> ' + item.old_data + '</div>';
-                        });
-                    }
-                    // Display the history data below the row
-                    document.getElementById('history-' + contractNo).innerHTML = historyHtml;
-                })
-                .catch(error => {
-                    console.error('Error fetching history:', error);
-                    document.getElementById('history-' + contractNo).innerHTML = '<p>Error loading history data.</p>';
-                });
+        function toggleHistory(formDataId) {
+            console.log("Fetching history for formDataId:", formDataId);  // Debugging log
+
+            if (!formDataId) {
+                console.error("form_data_id is missing or invalid");
+                return;
+            }
+
+            var historyRow = document.getElementById('history-row-' + formDataId);
+
+            if (historyRow.classList.contains('hidden')) {
+                fetch('/history/' + formDataId + '/json')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            historyRow.querySelector('.history-content').innerHTML = '<p>No history found.</p>';
+                        } else {
+                            var historyHtml = '<table border="1">';
+                            historyHtml += '<thead><tr><th>No</th><th>Contract No</th><th>Buyer</th><th>Invoice Value</th><th>Seal Image</th><th>Status</th></tr></thead>';
+                            historyHtml += '<tbody>';
+                            data.forEach(item => {
+                                historyHtml += '<tr>';
+                                historyHtml += '<td>' + (item.old_data.no || 'No previous history') + '</td>';
+                                historyHtml += '<td>' + (item.old_data.contract_no || 'No previous history') + '</td>';
+                                historyHtml += '<td>' + (item.old_data.buyer || 'No previous history') + '</td>';
+                                historyHtml += '<td>' + (item.old_data.invoice_value || 'No previous history') + '</td>';
+                                historyHtml += '<td>' + (item.old_data.seal_image || 'No previous history') + '</td>';
+                                historyHtml += '<td>' + (item.old_data.status || 'No previous history') + '</td>';
+                                historyHtml += '</tr>';
+                            });
+                            historyHtml += '</tbody>';
+                            historyHtml += '</table>';
+
+                            historyRow.querySelector('.history-content').innerHTML = historyHtml;
+                        }
+                        historyRow.classList.remove('hidden');
+                    })
+                    .catch(error => {
+                        console.error('Error fetching history:', error);
+                        historyRow.querySelector('.history-content').innerHTML = '<p>Error loading history data.</p>';
+                    });
+            } else {
+                historyRow.classList.add('hidden');  // Collapse if already open
+            }
         }
     </script>
 </head>
@@ -57,7 +88,8 @@
     <tbody>
         {% for item in items %}
         <tr>
-            <td onclick="fetchHistory('{{ item.contract_no }}')" style="cursor:pointer;">{{ item.no }}</td>
+            <!-- Only "No" column is clickable to toggle history -->
+            <td onclick="toggleHistory('{{ item.form_data_id }}')" style="cursor:pointer;">{{ item.no }}</td>  <!-- Updated reference to form_data_id -->
             <td>{{ item.contract_no }}</td>
             <td>{{ item.buyer }}</td>
             <td>{{ item.invoice_value }}</td>
@@ -65,16 +97,18 @@
             <td>{{ item.status }}</td>
             <td><a href="{{ url_for('edit_item', contract_no=item.contract_no) }}">Edit</a></td>
         </tr>
-        
-        <!-- Row for displaying previous versions of each field -->
-        <tr id="history-{{ item.contract_no }}" class="history-row">
-            <td colspan="7" class="previous-value">
-                <!-- Previous values will be loaded here dynamically -->
+
+        <!-- Hidden rows to show previous versions of the "No" field and others -->
+        <tr id="history-row-{{ item.form_data_id }}" class="hidden history-row">
+            <td colspan="7" class="history-content">
+                <!-- History content will be loaded here dynamically -->
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-
+<button type="button" onClick="window.location.href='/'">back</button>
 </body>
 </html>
+
+

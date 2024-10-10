@@ -92,7 +92,7 @@ class FormDataHistory(db.Model):
     def __repr__(self):
         return f'<FormDataHistory {self.id} for FormData {self.form_data_id}>'
 
-
+        
 
 @app.route('/list_items', methods=['GET'])
 def list_items():
@@ -367,25 +367,26 @@ def submit():
     return redirect(url_for('list_items'))  # Change 'success' to your success endpoint
 
 
-@app.route('/history/<string:contract_no>/json', methods=['GET'])
-def view_history(contract_no):
-    try:
-        history = FormDataHistory.query.filter_by(contract_no=contract_no).order_by(FormDataHistory.modified_at.desc()).all()
-        if not history:
-            return jsonify({"error": "No history found"})
-        
-        # Prepare history data for JSON response
-        history_data = []
-        for entry in history:
-            history_data.append({
-                "modified_at": entry.modified_at.strftime('%Y-%m-%d %H:%M:%S'),
-                "old_data": json.loads(entry.old_data)  # Ensure this is parsed correctly
-            })
-        
-        return jsonify(history_data)
-    except Exception as e:
-        print(f"Error fetching history for {contract_no}: {e}")
-        return jsonify({"error": "An error occurred while fetching history."}), 500
+@app.route('/history/<int:form_data_id>/json', methods=['GET'])
+def view_history(form_data_id):
+    history = FormDataHistory.query.filter_by(form_data_id=form_data_id).order_by(FormDataHistory.modified_at.desc()).all()
+
+    if not history:
+        return jsonify({"error": "No history found"})
+
+    # Prepare history data for JSON response
+    history_data = []
+    for entry in history:
+        history_data.append({
+            "modified_at": entry.modified_at.strftime('%Y-%m-%d %H:%M:%S'),
+            "old_data": json.loads(entry.old_data)
+        })
+
+    return jsonify(history_data)
+
+
+
+
 
 
 
