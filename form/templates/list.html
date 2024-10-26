@@ -20,10 +20,18 @@
             font-style: italic;
             color: #666;
         }
+        .expiring-soon {
+            color: red;
+            font-weight: bold;
+        }
+        .expired {
+            color: gray;
+            font-weight: bold;
+        }
     </style>
     <script>
         function toggleHistory(formDataId) {
-            console.log("Fetching history for formDataId:", formDataId);  // Debugging log
+            console.log("Fetching history for formDataId:", formDataId);
 
             if (!formDataId) {
                 console.error("form_data_id is missing or invalid");
@@ -49,6 +57,7 @@
                                 historyHtml += '<td>' + (item.old_data.buyer || 'No previous history') + '</td>';
                                 historyHtml += '<td>' + (item.old_data.invoice_value || 'No previous history') + '</td>';
                                 historyHtml += '<td>' + (item.old_data.seal_image || 'No previous history') + '</td>';
+                                historyHtml += '<td>' + (item.old_data.updated_at || 'No previous history') + '</td>';
                                 historyHtml += '<td>' + (item.old_data.status || 'No previous history') + '</td>';
                                 historyHtml += '</tr>';
                             });
@@ -64,7 +73,7 @@
                         historyRow.querySelector('.history-content').innerHTML = '<p>Error loading history data.</p>';
                     });
             } else {
-                historyRow.classList.add('hidden');  // Collapse if already open
+                historyRow.classList.add('hidden');
             }
         }
     </script>
@@ -82,33 +91,41 @@
             <th>Invoice Value</th>
             <th>Seal Image</th>
             <th>Status</th>
+            <th>Created At</th>
+            <th>Updated At</th>
             <th>Action</th>
         </tr>
     </thead>
     <tbody>
         {% for item in items %}
         <tr>
-            <!-- Only "No" column is clickable to toggle history -->
-            <td onclick="toggleHistory('{{ item.form_data_id }}')" style="cursor:pointer;">{{ item.no }}</td>  <!-- Updated reference to form_data_id -->
+            <td onclick="toggleHistory('{{ item.form_data_id }}')" style="cursor:pointer;">{{ item.no }}</td>
             <td>{{ item.contract_no }}</td>
             <td>{{ item.buyer }}</td>
             <td>{{ item.invoice_value }}</td>
             <td>{{ item.seal_image }}</td>
-            <td>{{ item.status }}</td>
+            <td>
+                <!-- Display current status -->
+                {{ item.status }}
+                <!-- Check for Expiring Soon status -->
+                {% if item.status == 'Expiring Soon' %}
+                    <span class="expiring-soon" title="This form is close to expiring!">⚠️ Expiring Soon</span>
+                {% elif item.status == 'Expired' %}
+                    <span class="expired" title="This form has expired!">❌ Expired</span>
+                {% endif %}
+            </td>
+            <td>{{ item.created_at }}</td>
+            <td>{{ item.updated_at }}</td>
             <td><a href="{{ url_for('edit_item', contract_no=item.contract_no) }}">Edit</a></td>
         </tr>
-
-        <!-- Hidden rows to show previous versions of the "No" field and others -->
         <tr id="history-row-{{ item.form_data_id }}" class="hidden history-row">
             <td colspan="7" class="history-content">
                 <!-- History content will be loaded here dynamically -->
-            </td>
+            </td> 
         </tr>
         {% endfor %}
     </tbody>
 </table>
-<button type="button" onClick="window.location.href='/'">back</button>
+<button type="button" onClick="window.location.href='/'">Back</button>
 </body>
 </html>
-
-

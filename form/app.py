@@ -1,19 +1,49 @@
-from flask import Flask, jsonify, render_template, request, redirect
+import json
+from flask import Flask, jsonify, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 import os
-import json  
-from flask import url_for
-from datetime import datetime 
-   
+from datetime import datetime, timedelta
+from flask_apscheduler import APScheduler
 
 
+
+# Create the Flask app
 app = Flask(__name__)
 
-# Configure the SQLite database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///formdataaam.db'
+
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///formdatam.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
+# Define the expiration check function
+def check_for_expiring_forms():
+    with app.app_context():
+        print("Checking for expiring forms...")  # Debugging line
+        expiration_warning_date = datetime.utcnow() - timedelta(days=1)
+        expiring_forms = FormData.query.filter(FormData.created_at <= expiration_warning_date, FormData.status != 'Expired').all()
+
+        for form in expiring_forms:
+            print(f"Form {form.no} with Contract No {form.contract_no} is expiring soon.")
+            form.status = 'Expiring Soon'
+            db.session.commit()
+
+# Initialize the scheduler
+scheduler = APScheduler()
+scheduler.init_app(app)
+scheduler.start()
+
+# Add the expiration check job to run daily
+scheduler.add_job(id='Expiration Check', func=check_for_expiring_forms, trigger='interval', days=1)
+
+
+
+# Rest of your app configuration and routes...
+
+# Configure the SQLite database
+
+
+# Initialize the database with the Flask app
 db = SQLAlchemy(app)
 
 # Define the model for the form data
@@ -67,7 +97,7 @@ class FormData(db.Model):
     amount_settled = db.Column(db.Float, nullable=False)
     bank = db.Column(db.String(100), nullable=False)
     ecd_number = db.Column(db.String(100), nullable=False)
-    status = db.Column(db.String(100), nullable=False)
+    status = db.Column(db.String(100), nullable=False, default='Draft')  # Status starts as Draft
     remark = db.Column(db.String(100), nullable=False)
     railway_bill_image = db.Column(db.String(200), nullable=True)
     payment_receipt_image = db.Column(db.String(200), nullable=True)
@@ -78,8 +108,29 @@ class FormData(db.Model):
     vgm_image = db.Column(db.String(200), nullable=True)
     payment_recieptt_image = db.Column(db.String(200), nullable=True)
 
+    # New fields for tracking creation and updating expiration status
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)  # Track when form is created
+    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)  # Track when form is updated
+
+    # Method to check if form is expired
+    def is_expired(self):
+        expiration_date = self.created_at + timedelta(days=90)  # Expire after 3 months
+        return datetime.utcnow() > expiration_date
+
     def __repr__(self):
         return f'<FormData {self.no}, {self.contract_no}>'
+
+# Route to display form data (for example)
+# @app.route('/')
+# def index():
+#     form_data_list = FormData.query.all()
+#     return render_template('index.html', form_data_list=form_data_list)
+
+# Initialize the database tables
+# if __name__ == '__main__':
+#     with app.app_context():
+#         db.create_all()  # Create tables if they don't exist
+#     app.run(debug=True)
 
 
 
@@ -426,6 +477,8 @@ def view_history_json(contract_no):
 
 
 
+
+
 @app.route('/edit/<string:contract_no>', methods=['GET', 'POST'])
 def edit_item(contract_no):
     # Fetch the existing form data (item) by contract_no
@@ -574,6 +627,14 @@ def edit_item(contract_no):
 
 
 
+
+@scheduler.task('interval', hours=24)  # Runs every 24 hours
+def check_expiring_forms():
+    expiring_forms = FormData.query.filter(
+        FormData.created_at <= datetime.utcnow() - timedelta(days=83)  # 7 days left
+    ).all()
+    for form in expiring_forms:
+        notify_user(form)
 
 
 if __name__ == '__main__':
