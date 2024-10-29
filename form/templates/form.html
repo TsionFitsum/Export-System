@@ -29,11 +29,12 @@
         });
     </script>
     
+    
 </head>
 <body class="bg-gray-100 p-6">
     <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8">
         <h2 class="text-2xl font-bold mb-20 text-center">Export Details Form</h2>
-        <form action="/submit" method="POST" enctype="multipart/form-data">
+        <form action="/submit" method="POST" enctype="multipart/form-data" onsubmit="return validateContractNo()">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- First pair of inputs -->
                 <div>
@@ -43,8 +44,12 @@
                 
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">Contract No.</label>
-                    <input type="text" name="contract_no" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" name="contract_no" id="contract_no" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                    <span id="contract_no_error" class="text-red-600 text-sm mt-1 hidden">Contract number already exists.</span>
                 </div>
+            
+                
+
                 <!-- Horizontal rule after first pair -->
                 <div class="col-span-2">
                     <hr class="my-4 border-t-2 border-gray-300">
@@ -509,6 +514,42 @@
     </script>
 
     <script>
+        function checkContractNo() {
+            let contractNoInput = document.getElementById("contract_no");
+            let errorMessage = document.getElementById("contract_no_error");
+            let contractNo = contractNoInput.value;
+    
+            fetch("/check_contract_no", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ contract_no: contractNo })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle the response data
+                if (data.exists) {
+                    contractNoInput.style.borderColor = "red"; // Change border color to indicate error
+                    errorMessage.classList.remove("hidden"); // Show error message
+                } else {
+                    contractNoInput.style.borderColor = ""; // Reset border color if valid
+                    errorMessage.classList.add("hidden"); // Hide error message
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+</script>
+
+
+
+
+    <script>
         // JavaScript to toggle the comment field visibility
         document.getElementById('pss_result').addEventListener('change', function() {
             var commentContainer = document.getElementById('comment_container');
@@ -519,5 +560,64 @@
             }
         });
     </script>
+    <script>
+        let existingContractNumbers = []; // Replace with data fetched from the server
+        
+        // Fetch existing contract numbers from the backend on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('/get_contract_numbers')  // Replace with the actual backend route
+                .then(response => response.json())
+                .then(data => {
+                    existingContractNumbers = data;  // Assumes data is a list of contract numbers
+                })
+                .catch(error => console.error('Error fetching contract numbers:', error));
+        });
+    
+        // Function to check if the contract number exists
+        document.getElementById('contract_no').addEventListener('input', function() {
+            const contractNo = this.value;
+            const errorMsg = document.getElementById('contract_no_error');
+            
+            if (existingContractNumbers.includes(contractNo)) {
+                errorMsg.style.display = 'block';  // Show error if contract no exists
+            } else {
+                errorMsg.style.display = 'none';  // Hide error if it's unique
+            }
+        });
+    </script>
+    
+    
+    <script> 
+        // Function to validate contract number before form submission
+        async function validateContractNo() {
+            const contractNoInput = document.getElementById("contract_no");
+            const errorElement = document.getElementById("contract_no_error");
+            
+            try {
+                // Send request to check if the contract number exists
+                const response = await fetch(`/check-contract-no?contract_no=${encodeURIComponent(contractNoInput.value)}`);
+                const data = await response.json();
+                
+                if (data.exists) {
+                    // If contract number exists, show error message and apply red border
+                    errorElement.classList.remove("hidden");
+                    contractNoInput.classList.add("border-red-600");
+                    return false;  // Prevent form submission
+                } else {
+                    // If contract number is unique, remove error indicators if present
+                    errorElement.classList.add("hidden");
+                    contractNoInput.classList.remove("border-red-600");
+                    return true;  // Allow form submission
+                }
+            } catch (error) {
+                console.error("Error validating contract number:", error);
+                return false;  // Prevent submission if there's an error
+            }
+        }
+    </script>
+
+
 </body>
 </html>
+
+

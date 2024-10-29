@@ -19,14 +19,41 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 # Define the expiration check function
 def check_for_expiring_forms():
     with app.app_context():
-        print("Checking for expiring forms...")  # Debugging line
-        expiration_warning_date = datetime.utcnow() - timedelta(days=1)
-        expiring_forms = FormData.query.filter(FormData.created_at <= expiration_warning_date, FormData.status != 'Expired').all()
+        # Debugging line to confirm function entry
+        print("Running expiration check...")
+        
+        # Set the dates for expired and expiring soon statuses
+        expiration_date = datetime.utcnow() - timedelta(days=1)  # 1 day for testing purposes
+        expiration_warning_date = datetime.utcnow() - timedelta(days=0.5)  # e.g., 12 hours for testing "expiring soon"
 
+        # Expired forms check
+        expired_forms = FormData.query.filter(
+            FormData.created_at <= expiration_date,
+            FormData.status != 'Expired'
+        ).all()
+
+        # Expiring soon forms check
+        expiring_forms = FormData.query.filter(
+            FormData.created_at <= expiration_warning_date,
+            FormData.status != 'Expired'
+        ).all()
+
+        # Update expired forms
+        for form in expired_forms:
+            print(f"Form {form.no} with Contract No {form.contract_no} has expired.")
+            form.status = 'Expired'
+
+        # Update expiring soon forms
         for form in expiring_forms:
             print(f"Form {form.no} with Contract No {form.contract_no} is expiring soon.")
-            form.status = 'Expiring Soon'
-            db.session.commit()
+            if form.status != 'Expired':  # Ensure it’s not overwritten
+                form.status = 'Expiring Soon'
+
+        # Commit changes once after all updates
+        db.session.commit()
+        print("Expiration check completed.")
+
+
 
 # Initialize the scheduler
 scheduler = APScheduler()
@@ -45,6 +72,7 @@ scheduler.add_job(id='Expiration Check', func=check_for_expiring_forms, trigger=
 
 # Initialize the database with the Flask app
 db = SQLAlchemy(app)
+
 
 # Define the model for the form data
 class FormData(db.Model):
@@ -131,6 +159,11 @@ class FormData(db.Model):
 #     with app.app_context():
 #         db.create_all()  # Create tables if they don't exist
 #     app.run(debug=True)
+
+@app.route('/test-expiration')
+def test_expiration():
+    check_for_expiring_forms()
+    return "Expiration check complete."
 
 
 
@@ -625,6 +658,20 @@ def edit_item(contract_no):
 
     return render_template('edit_form.html', form_data=form_data)
 
+
+@app.route('/get_contract_numbers')
+def get_contract_numbers():
+    contract_numbers = [form.contract_no for form in FormData.query.all()]
+    return jsonify(contract_numbers)
+
+
+@app.route('/check_contract_no', methods=['POST'])
+def check_contract_no():
+    data = request.get_json()
+    contract_no = data.get("contract_no")
+    # Query the database to see if the contract number already exists
+    existing_form = FormData.query.filter_by(contract_no=contract_no).first()
+    return jsonify({"exists": bool(existing_form)})
 
 
 
