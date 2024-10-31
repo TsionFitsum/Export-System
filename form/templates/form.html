@@ -34,7 +34,7 @@
 <body class="bg-gray-100 p-6">
     <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8">
         <h2 class="text-2xl font-bold mb-20 text-center">Export Details Form</h2>
-        <form action="/submit" method="POST" enctype="multipart/form-data" onsubmit="return validateContractNo()">
+        <form id="contractForm" action="/submit" method="POST" enctype="multipart/form-data" onsubmit="return validateAndSubmitForm()">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- First pair of inputs -->
                 <div>
@@ -477,7 +477,7 @@
                 <a href="{{ url_for('list_items') }}">View All Items</a>
 
                 <div class="mt-6 text-center">
-                    <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg hover:bg-blue-700">
+                    <button type="button" onclick="validateAndSubmitForm()" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg hover:bg-blue-700">
                         Submit
                     </button>
                 </div>
@@ -586,36 +586,35 @@
         });
     </script>
     
-    
-    <script> 
-        // Function to validate contract number before form submission
-        async function validateContractNo() {
+    <script>
+        async function validateAndSubmitForm() {
             const contractNoInput = document.getElementById("contract_no");
             const errorElement = document.getElementById("contract_no_error");
-            
+        
             try {
-                // Send request to check if the contract number exists
+                // Send a request to check if the contract number exists
                 const response = await fetch(`/check-contract-no?contract_no=${encodeURIComponent(contractNoInput.value)}`);
                 const data = await response.json();
-                
+        
                 if (data.exists) {
-                    // If contract number exists, show error message and apply red border
-                    errorElement.classList.remove("hidden");
-                    contractNoInput.classList.add("border-red-600");
-                    return false;  // Prevent form submission
+                    // Show a pop-up alert and prevent form submission
+                    alert("Error: Contract number already exists. Please enter a unique contract number.");
+                    errorElement.classList.remove("hidden"); // Show inline error
+                    contractNoInput.classList.add("border-red-600"); // Highlight input in red
+                    return false; // Prevent form submission
                 } else {
-                    // If contract number is unique, remove error indicators if present
+                    // Hide the error message and remove red border if unique
                     errorElement.classList.add("hidden");
                     contractNoInput.classList.remove("border-red-600");
-                    return true;  // Allow form submission
+                    return true; // Allow form submission
                 }
             } catch (error) {
                 console.error("Error validating contract number:", error);
-                return false;  // Prevent submission if there's an error
+                return false; // Prevent submission on error
             }
         }
+        
     </script>
-
 
 </body>
 </html>
