@@ -477,7 +477,7 @@
                 <a href="{{ url_for('list_items') }}">View All Items</a>
 
                 <div class="mt-6 text-center">
-                    <button type="button" onclick="validateAndSubmitForm()" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg hover:bg-blue-700">
+                    <button type="submit"  class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg hover:bg-blue-700">
                         Submit
                     </button>
                 </div>
@@ -593,7 +593,7 @@
         
             try {
                 // Send a request to check if the contract number exists
-                const response = await fetch(`/check-contract-no?contract_no=${encodeURIComponent(contractNoInput.value)}`);
+                const response = await fetch(`/check_contract_no?contract_no=${encodeURIComponent(contractNoInput.value)}`);
                 const data = await response.json();
         
                 if (data.exists) {

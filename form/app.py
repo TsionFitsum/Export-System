@@ -4,7 +4,10 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 from datetime import datetime, timedelta
 from flask_apscheduler import APScheduler
+import logging
 
+# Set up logging to display debugging information
+logging.basicConfig(level=logging.DEBUG)
 
 
 # Create the Flask app
@@ -498,6 +501,10 @@ def view_history_json(contract_no):
 
 
 
+from datetime import datetime
+
+from datetime import datetime
+
 @app.route('/edit/<string:contract_no>', methods=['GET', 'POST'])
 def edit_item(contract_no):
     # Fetch the existing form data by contract_no
@@ -565,9 +572,9 @@ def edit_item(contract_no):
     "vgm_image": form_data.vgm_image,
     "payment_recieptt_image": form_data.payment_recieptt_image,
     "created_at": form_data.created_at
-}, default=str)  # `default=str` handles datetime serialization
-
-
+            }, default=str)  # `default=str` handles datetime serialization
+            # Save the current state to FormDataHistory before updating the item
+            
             # Save the current state to FormDataHistory before updating the item
             history_entry = FormDataHistory(
                 form_data_id=form_data.id,
@@ -576,28 +583,47 @@ def edit_item(contract_no):
             )
             db.session.add(history_entry)
 
-        # If form_data does not exist, create a new FormData object
         else:
             form_data = FormData(contract_no=contract_no)
 
-        # Update fields based on form input dynamically
-        for field in form_data.__table__.columns.keys():
-            if field != "id" and field != "created_at":  # Avoid altering primary key and timestamp fields
-                if field == "invoice_value" or field == "insurance_amount" or field == "amount_settled":
-                    setattr(form_data, field, request.form.get(field, type=float))  # Cast to float for numeric fields
-                else:
-                    setattr(form_data, field, request.form.get(field, ''))
+        # Define datetime fields and validate them
+        datetime_fields = ["clu_inspected_date", "pss_sample_date", "pss_sample_result_date", 
+                           "date_loaded_from_wh", "vessel_date", "date_received_obl", 
+                           "date_docs_sent_to_bank", "date_credit_advice_received", "updated_at"]
 
-        # Ensure default values for specific fields
+        for field in form_data.__table__.columns.keys():
+            if field != "id" and field != "created_at":
+                form_value = request.form.get(field, '')
+
+                if field in ["invoice_value", "insurance_amount", "amount_settled"]:
+                    # Convert to float or set to None if empty
+                    setattr(form_data, field, float(form_value) if form_value else None)
+                elif field in datetime_fields:
+                    # Parse datetime or set to None if empty
+                    if form_value:
+                        try:
+                            parsed_date = datetime.strptime(form_value, '%Y-%m-%d')
+                            setattr(form_data, field, parsed_date)
+                        except ValueError:
+                            logging.error(f"Invalid date format for {field}: {form_value}")
+                            setattr(form_data, field, None)
+                    else:
+                        setattr(form_data, field, None)
+                else:
+                    setattr(form_data, field, form_value)
+
+        # Ensure 'status' and 'updated_at' get valid defaults
         form_data.status = request.form.get('status', 'Draft')
+        form_data.updated_at = datetime.utcnow()  # Automatically set `updated_at` to current timestamp
 
         # Save the updated item back to the database
         db.session.add(form_data)
         db.session.commit()
 
-        return redirect(url_for('list_items'))  # Redirect after saving
+        return redirect(url_for('list_items'))
 
     return render_template('edit_form.html', form_data=form_data)
+
 
 
 @app.route('/get_contract_numbers')
