@@ -503,7 +503,7 @@ def view_history_json(contract_no):
 
 from datetime import datetime
 
-from datetime import datetime
+
 
 @app.route('/edit/<string:contract_no>', methods=['GET', 'POST'])
 def edit_item(contract_no):
