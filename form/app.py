@@ -1,10 +1,12 @@
 import json
-from flask import Flask, jsonify, render_template, request, redirect, url_for
+from flask import Flask, jsonify, render_template, request, redirect, send_from_directory, url_for
 from flask_sqlalchemy import SQLAlchemy
 import os
 from datetime import datetime, timedelta
 from flask_apscheduler import APScheduler
 import logging
+from werkzeug.utils import secure_filename
+
 
 # Set up logging to display debugging information
 logging.basicConfig(level=logging.DEBUG)
@@ -504,6 +506,12 @@ def view_history_json(contract_no):
 from datetime import datetime
 
 
+import os
+import json
+from datetime import datetime
+from flask import request, redirect, url_for, render_template
+from werkzeug.utils import secure_filename
+import logging
 
 @app.route('/edit/<string:contract_no>', methods=['GET', 'POST'])
 def edit_item(contract_no):
@@ -512,69 +520,8 @@ def edit_item(contract_no):
 
     if request.method == 'POST':
         if form_data:  # If the item exists, create a history entry
-            # Dynamically serialize current state of the item into a JSON object
-            old_data_json = json.dumps({
-    "contract_no": form_data.contract_no,
-    "cert_no": form_data.cert_no,
-    "grade": form_data.grade,
-    "buyer": form_data.buyer,
-    "invoice_value": form_data.invoice_value,
-    "payment_term": form_data.payment_term,
-    "seal_image": form_data.seal_image,
-    "undertaking_image": form_data.undertaking_image,
-    "documentary_credit": form_data.documentary_credit,
-    "bags": form_data.bags,
-    "mts": form_data.mts,
-    "fcl": form_data.fcl,
-    "clu_inspected_date": form_data.clu_inspected_date,
-    "clu_result": form_data.clu_result,
-    "destination": form_data.destination,
-    "permit_number": form_data.permit_number,
-    "lpco_number": form_data.lpco_number,
-    "shipping_line": form_data.shipping_line,
-    "pss_sample_date": form_data.pss_sample_date,
-    "pss_sample_result_date": form_data.pss_sample_result_date,
-    "pss_result": form_data.pss_result,
-    "pss_comment": form_data.pss_comment,
-    "booking_number": form_data.booking_number,
-    "booking_confirmation_image": form_data.booking_confirmation_image,
-    "container_number": form_data.container_number,
-    "container_image": form_data.container_image,
-    "seal_number": form_data.seal_number,
-    "date_loaded_from_wh": form_data.date_loaded_from_wh,
-    "transitor_name": form_data.transitor_name,
-    "transitor_operation_number": form_data.transitor_operation_number,
-    "insurance_company": form_data.insurance_company,
-    "insurance_amount": form_data.insurance_amount,
-    "truck_or_train_plate_number": form_data.truck_or_train_plate_number,
-    "driver_phone_number": form_data.driver_phone_number,
-    "djibouti_forwarder": form_data.djibouti_forwarder,
-    "djibouti_forwarder_contact": form_data.djibouti_forwarder_contact,
-    "vessel_date": form_data.vessel_date,
-    "vessel_name": form_data.vessel_name,
-    "bill_no": form_data.bill_no,
-    "date_received_obl": form_data.date_received_obl,
-    "date_docs_sent_to_bank": form_data.date_docs_sent_to_bank,
-    "docs_awb_number": form_data.docs_awb_number,
-    "date_credit_advice_received": form_data.date_credit_advice_received,
-    "payment_status": form_data.payment_status,
-    "amount_settled": form_data.amount_settled,
-    "bank": form_data.bank,
-    "ecd_number": form_data.ecd_number,
-    "status": form_data.status,
-    "remark": form_data.remark,
-    "railway_bill_image": form_data.railway_bill_image,
-    "payment_receipt_image": form_data.payment_receipt_image,
-    "trackway_bill_image": form_data.trackway_bill_image,
-    "nb_contract_image": form_data.nb_contract_image,
-    "commercial_invoice_image": form_data.commercial_invoice_image,
-    "pl_image": form_data.pl_image,
-    "vgm_image": form_data.vgm_image,
-    "payment_recieptt_image": form_data.payment_recieptt_image,
-    "created_at": form_data.created_at
-            }, default=str)  # `default=str` handles datetime serialization
-            # Save the current state to FormDataHistory before updating the item
-            
+            old_data_json = json.dumps({field.name: getattr(form_data, field.name)
+                                        for field in FormData.__table__.columns}, default=str)
             # Save the current state to FormDataHistory before updating the item
             history_entry = FormDataHistory(
                 form_data_id=form_data.id,
@@ -582,24 +529,39 @@ def edit_item(contract_no):
                 modified_at=datetime.utcnow()
             )
             db.session.add(history_entry)
-
         else:
             form_data = FormData(contract_no=contract_no)
 
-        # Define datetime fields and validate them
-        datetime_fields = ["clu_inspected_date", "pss_sample_date", "pss_sample_result_date", 
-                           "date_loaded_from_wh", "vessel_date", "date_received_obl", 
-                           "date_docs_sent_to_bank", "date_credit_advice_received", "updated_at"]
+        # List of file fields that need special handling
+        file_fields = ["seal_image", "undertaking_image", "booking_confirmation_image", "container_image",
+                       "railway_bill_image", "payment_receipt_image", "trackway_bill_image", "nb_contract_image",
+                       "commercial_invoice_image", "pl_image", "vgm_image", "payment_recieptt_image"]
 
+        # Loop through form fields and update them
         for field in form_data.__table__.columns.keys():
-            if field != "id" and field != "created_at":
+            if field not in ["id", "created_at"]:
                 form_value = request.form.get(field, '')
 
-                if field in ["invoice_value", "insurance_amount", "amount_settled"]:
-                    # Convert to float or set to None if empty
+                if field in file_fields:
+                    # File fields: check if a new file was uploaded
+                    file = request.files.get(field)
+                    if file and file.filename:
+                        filename = secure_filename(file.filename)
+                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                        setattr(form_data, field, filename)
+                    else:
+                        # If no new file uploaded, retain the existing file path
+                        existing_file_path = getattr(form_data, field)
+                        setattr(form_data, field, existing_file_path)
+
+                elif field in ["invoice_value", "insurance_amount", "amount_settled"]:
+                    # Numeric fields: convert to float or set to None if empty
                     setattr(form_data, field, float(form_value) if form_value else None)
-                elif field in datetime_fields:
-                    # Parse datetime or set to None if empty
+
+                elif field in ["clu_inspected_date", "pss_sample_date", "pss_sample_result_date", 
+                               "date_loaded_from_wh", "vessel_date", "date_received_obl", 
+                               "date_docs_sent_to_bank", "date_credit_advice_received", "updated_at"]:
+                    # Date fields: parse or preserve existing date if not updated
                     if form_value:
                         try:
                             parsed_date = datetime.strptime(form_value, '%Y-%m-%d')
@@ -608,15 +570,19 @@ def edit_item(contract_no):
                             logging.error(f"Invalid date format for {field}: {form_value}")
                             setattr(form_data, field, None)
                     else:
-                        setattr(form_data, field, None)
+                        # Preserve the existing date values if not updated
+                        if hasattr(form_data, field):
+                            existing_value = getattr(form_data, field)
+                            setattr(form_data, field, existing_value)
                 else:
+                    # General fields: directly set the form value
                     setattr(form_data, field, form_value)
 
-        # Ensure 'status' and 'updated_at' get valid defaults
+        # Set default status and updated timestamp
         form_data.status = request.form.get('status', 'Draft')
-        form_data.updated_at = datetime.utcnow()  # Automatically set `updated_at` to current timestamp
+        form_data.updated_at = datetime.utcnow()
 
-        # Save the updated item back to the database
+        # Save changes to the database
         db.session.add(form_data)
         db.session.commit()
 
@@ -625,6 +591,60 @@ def edit_item(contract_no):
     return render_template('edit_form.html', form_data=form_data)
 
 
+
+def get_existing_or_new_value(form, field_name, existing_value):
+    # Fetch the form value; if empty or None, fallback to existing database value
+    new_value = form.get(field_name)
+    return new_value if new_value else existing_value
+
+@app.route('/update_form/<int:form_id>', methods=['POST'])
+def update_form(form_id):
+    form_data = FormData.query.get(form_id)
+
+    # Use the helper function to handle fallback to existing values
+    form_data.grade = request.form.get('grade')  # example non-date field
+
+    # Date fields with fallback
+    form_data.pss_sample_date = get_existing_or_new_value(request.form, 'pss_sample_date', form_data.pss_sample_date)
+    form_data.pss_sample_result_date = get_existing_or_new_value(request.form, 'pss_sample_result_date', form_data.pss_sample_result_date)
+    form_data.date_loaded_from_wh = get_existing_or_new_value(request.form, 'date_loaded_from_wh', form_data.date_loaded_from_wh)
+    form_data.vessel_date = get_existing_or_new_value(request.form, 'vessel_date', form_data.vessel_date)
+
+    form_data.updated_at = datetime.now()
+
+    try:
+        db.session.commit()
+        flash("Form updated successfully.", "success")
+    except IntegrityError as e:
+        db.session.rollback()
+        flash("Failed to update form due to missing fields or constraints.", "error")
+        app.logger.error(f"IntegrityError occurred: {e}")
+        return redirect(url_for('edit_form', form_id=form_id))
+
+    return redirect(url_for('list_items'))
+
+
+
+@app.route('/view/<contract_no>')
+def view_item(contract_no):
+    # Fetch the specific item from the database
+    item = FormData.query.filter_by(contract_no=contract_no).first()
+    if not item:
+        flash("Item not found", "error")
+        return redirect(url_for('item_list'))  # Redirect if item doesn't exist
+
+    return render_template('view_item.html', item=item)
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
+def handle_upload(file):
+    filename = secure_filename(file.filename)
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    file.save(file_path)
+    return filename  # Save the filename to the database
 
 @app.route('/get_contract_numbers')
 def get_contract_numbers():

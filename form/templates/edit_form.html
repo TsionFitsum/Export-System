@@ -9,7 +9,10 @@
 <body class="bg-gray-100 p-6">
 
     <form method="POST" enctype="multipart/form-data" class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md">
-        <h2 class="text-2xl font-bold mb-6">Edit item {{form_data.contract_no}}</h2>
+        <h2 class="text-2xl font-bold mb-6">Edit item {{ form_data.contract_no }}</h2>
+
+        <input type="hidden" name="contract_no" value="{{ form_data.contract_no }}"> 
+        <input type="hidden" name="no" value="{{ form_data.no }}"> 
 
         <!-- Status Bar -->
         <div class="flex mb-6">
@@ -22,6 +25,7 @@
         </div>
         <input type="hidden" name="status" id="status-input" value="{{ form_data.status }}">
 
+        <!-- Form Input Fields -->
         <div class="grid grid-cols-1 gap-4">
             <!-- Text input fields -->
             <div>
@@ -49,66 +53,28 @@
                 <input type="text" name="payment_term" value="{{ form_data.payment_term }}" class="w-full mt-2 p-2 border rounded-md" required>
             </div>
 
+            <!-- Date Fields (Read-only) -->
             <div>
                 <label for="pss_sample_date" class="block font-medium text-gray-700">PSS Sample Date:</label>
-                <input type="text" name="pss_sample_date" value="{{ form_data.pss_sample_date }}" class="w-full mt-2 p-2 border rounded-md" required>
+                <input type="date" name="pss_sample_date" value="{{ form_data.pss_sample_date }}" class="w-full mt-2 p-2 border rounded-md" readonly>
             </div>
-            <div>
-    <label for="vessel_date" class="block font-medium text-gray-700">Vessel Date:</label>
-    <input type="text" name="vessel_date" value="{{ form_data.vessel_date }}" class="w-full mt-2 p-2 border rounded-md" required>
-</div>
-
-<div>
-    <label for="clu_inspected_date" class="block font-medium text-gray-700">CLU Inspected Date:</label>
-    <input type="text" name="clu_inspected_date" value="{{ form_data.clu_inspected_date }}" class="w-full mt-2 p-2 border rounded-md" required>
-</div>
-
-<div>
-    <label for="pss_sample_date" class="block font-medium text-gray-700">PSS Sample Date:</label>
-    <input type="text" name="pss_sample_date" value="{{ form_data.pss_sample_date }}" class="w-full mt-2 p-2 border rounded-md" required>
-</div>
-
-<div>
-    <label for="pss_sample_result_date" class="block font-medium text-gray-700">PSS Sample Result Date:</label>
-    <input type="text" name="pss_sample_result_date" value="{{ form_data.pss_sample_result_date }}" class="w-full mt-2 p-2 border rounded-md" required>
-</div>
-
-<div>
-    <label for="date_loaded_from_wh" class="block font-medium text-gray-700">Date Loaded from Warehouse:</label>
-    <input type="text" name="date_loaded_from_wh" value="{{ form_data.date_loaded_from_wh }}" class="w-full mt-2 p-2 border rounded-md" required>
-</div>
-
-<div>
-    <label for="vessel_date" class="block font-medium text-gray-700">Vessel Date:</label>
-    <input type="text" name="vessel_date" value="{{ form_data.vessel_date }}" class="w-full mt-2 p-2 border rounded-md" required>
-</div>
-
-<div>
-    <label for="date_received_obl" class="block font-medium text-gray-700">Date Received OBL:</label>
-    <input type="text" name="date_received_obl" value="{{ form_data.date_received_obl }}" class="w-full mt-2 p-2 border rounded-md" required>
-</div>
-
-<div>
-    <label for="date_docs_sent_to_bank" class="block font-medium text-gray-700">Date Docs Sent to Bank:</label>
-    <input type="text" name="date_docs_sent_to_bank" value="{{ form_data.date_docs_sent_to_bank }}" class="w-full mt-2 p-2 border rounded-md" required>
-</div>
-
-<div>
-    <label for="date_credit_advice_received" class="block font-medium text-gray-700">Date Credit Advice Received:</label>
-    <input type="text" name="date_credit_advice_received" value="{{ form_data.date_credit_advice_received }}" class="w-full mt-2 p-2 border rounded-md" required>
-</div>
-
-<div>
-    <label for="updated_at" class="block font-medium text-gray-700">Updated At:</label>
-    <input type="text" name="updated_at" value="{{ form_data.updated_at }}" class="w-full mt-2 p-2 border rounded-md" readonly>
-</div>
-
 
             <div>
                 <label for="pss_sample_result_date" class="block font-medium text-gray-700">PSS Sample Result Date:</label>
-                <input type="text" name="pss_sample_result_date" value="{{ form_data.pss_sample_result_date }}" class="w-full mt-2 p-2 border rounded-md" required>
+                <input type="date" name="pss_sample_result_date" value="{{ form_data.pss_sample_result_date }}" class="w-full mt-2 p-2 border rounded-md" readonly>
             </div>
 
+            <div>
+                <label for="date_loaded_from_wh" class="block font-medium text-gray-700">Date Loaded From WH:</label>
+                <input type="date" name="date_loaded_from_wh" value="{{ form_data.date_loaded_from_wh }}" class="w-full mt-2 p-2 border rounded-md" readonly>
+            </div>
+
+            <div>
+                <label for="vessel_date" class="block font-medium text-gray-700">Vessel Date:</label>
+                <input type="date" name="vessel_date" value="{{ form_data.vessel_date }}" class="w-full mt-2 p-2 border rounded-md" readonly>
+            </div>
+
+            <!-- Additional input fields -->
             <div>
                 <label for="pss_result" class="block font-medium text-gray-700">PSS Result:</label>
                 <input type="text" name="pss_result" value="{{ form_data.pss_result }}" class="w-full mt-2 p-2 border rounded-md" required>
@@ -119,7 +85,6 @@
                 <textarea name="pss_comment" class="w-full mt-2 p-2 border rounded-md">{{ form_data.pss_comment }}</textarea>
             </div>
 
-            <!-- More input fields -->
             <div>
                 <label for="booking_number" class="block font-medium text-gray-700">Booking Number:</label>
                 <input type="text" name="booking_number" value="{{ form_data.booking_number }}" class="w-full mt-2 p-2 border rounded-md" required>
@@ -136,11 +101,6 @@
             </div>
 
             <div>
-                <label for="date_loaded_from_wh" class="block font-medium text-gray-700">Date Loaded from Warehouse:</label>
-                <input type="text" name="date_loaded_from_wh" value="{{ form_data.date_loaded_from_wh }}" class="w-full mt-2 p-2 border rounded-md" required>
-            </div>
-
-            <div>
                 <label for="insurance_amount" class="block font-medium text-gray-700">Insurance Amount:</label>
                 <input type="number" name="insurance_amount" value="{{ form_data.insurance_amount }}" class="w-full mt-2 p-2 border rounded-md" required>
             </div>
@@ -151,80 +111,28 @@
             </div>
 
             <!-- File upload fields -->
-            <div>
-                <label for="seal_image" class="block font-medium text-gray-700">Seal Image:</label>
-                {% if form_data.seal_image %}
-                    <span class="block mt-1 text-sm text-gray-500">{{ form_data.seal_image.split('/')[-1] }}</span>
-                {% endif %}
-                <input type="file" name="seal_image" class="w-full mt-2 p-2 border rounded-md">
-            </div>
-
-            <div>
-                <label for="undertaking_letter" class="block font-medium text-gray-700">Undertaking Letter:</label>
-                {% if form_data.undertaking_letter %}
-                    <span class="block mt-1 text-sm text-gray-500">{{ form_data.undertaking_letter.split('/')[-1] }}</span>
-                {% endif %}
-                <input type="file" name="undertaking_letter" class="w-full mt-2 p-2 border rounded-md">
-            </div>
-
-            <div>
-                <label for="commercial_invoice" class="block font-medium text-gray-700">Commercial Invoice:</label>
-                {% if form_data.commercial_invoice %}
-                    <span class="block mt-1 text-sm text-gray-500">{{ form_data.commercial_invoice.split('/')[-1] }}</span>
-                {% endif %}
-                <input type="file" name="commercial_invoice" class="w-full mt-2 p-2 border rounded-md">
-            </div>
-
-            <div>
-                <label for="packing_list" class="block font-medium text-gray-700">Packing List:</label>
-                {% if form_data.packing_list %}
-                    <span class="block mt-1 text-sm text-gray-500">{{ form_data.packing_list.split('/')[-1] }}</span>
-                {% endif %}
-                <input type="file" name="packing_list" class="w-full mt-2 p-2 border rounded-md">
-            </div>
-
-            <div>
-                <label for="bill_of_lading" class="block font-medium text-gray-700">Bill of Lading:</label>
-                {% if form_data.bill_of_lading %}
-                    <span class="block mt-1 text-sm text-gray-500">{{ form_data.bill_of_lading.split('/')[-1] }}</span>
-                {% endif %}
-                <input type="file" name="bill_of_lading" class="w-full mt-2 p-2 border rounded-md">
-            </div>
-
-            <div>
-                <label for="insurance_certificate" class="block font-medium text-gray-700">Insurance Certificate:</label>
-                {% if form_data.insurance_certificate %}
-                    <span class="block mt-1 text-sm text-gray-500">{{ form_data.insurance_certificate.split('/')[-1] }}</span>
-                {% endif %}
-                <input type="file" name="insurance_certificate" class="w-full mt-2 p-2 border rounded-md">
-            </div>
-
-            <div>
-                <label for="freight_invoice" class="block font-medium text-gray-700">Freight Invoice:</label>
-                {% if form_data.freight_invoice %}
-                    <span class="block mt-1 text-sm text-gray-500">{{ form_data.freight_invoice.split('/')[-1] }}</span>
-                {% endif %}
-                <input type="file" name="freight_invoice" class="w-full mt-2 p-2 border rounded-md">
-            </div>
+            {% for field in ['seal_image', 'undertaking_letter', 'commercial_invoice', 'packing_list', 'bill_of_lading', 'insurance_certificate', 'freight_invoice'] %}
+                <div>
+                    <label for="{{ field }}" class="block font-medium text-gray-700">{{ field.replace('_', ' ').title() }}:</label>
+                    {% if form_data[field] %}
+                        <span class="block mt-1 text-sm text-gray-500">{{ form_data[field].rsplit('/', 1)[-1] }}</span>
+                    {% endif %}
+                    <input type="file" name="{{ field }}" class="w-full mt-2 p-2 border rounded-md">
+                </div>
+            {% endfor %}
         </div>
 
         <!-- Submit and Back buttons -->
         <div class="flex justify-between mt-8">
             <input type="submit" value="Update" class="bg-green-500 text-white py-2 px-4 rounded-lg cursor-pointer hover:bg-green-600">
-            <button type="button" class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600" onClick="window.location.href='/list_items'">Back</button>
+            <button type="button" class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600" onclick="window.location.href='/list_items'">Back</button>
         </div>
     </form>
 
     <script>
-        // Function to toggle the status using Tailwind
         function setStatus(status) {
             document.getElementById('status-input').value = status;
 
-        // Log the status to the console
-        console.log("Current status:", status);
-
-
-            document.getElementById('status-input').value = status;
             if (status === 'Draft') {
                 document.getElementById('draft-status').classList.add('bg-green-500', 'text-white');
                 document.getElementById('draft-status').classList.remove('bg-gray-300');

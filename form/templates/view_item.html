@@ -1,0 +1,56 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Item</title>
+</head>
+<body>
+
+<h1>View Item</h1>
+
+<table border="1">
+    <tr>
+        <th>No</th>
+        <td>{{ item.no }}</td>
+    </tr>
+    <tr>
+        <th>Contract No</th>
+        <td>{{ item.contract_no }}</td>
+    </tr>
+    <tr>
+        <th>Buyer</th>
+        <td>{{ item.buyer }}</td>
+    </tr>
+    <tr>
+        <th>Invoice Value</th>
+        <td>{{ item.invoice_value }}</td>
+    </tr>
+    <tr>
+        <th>Seal Image</th>
+        <td>
+            {% if item.seal_image %}
+                <img src="{{ url_for('uploaded_file', filename=item.seal_image) }}" alt="Seal Image" style="max-width: 200px;">
+            {% else %}
+                <p>No file uploaded</p>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>Status</th>
+        <td>{{ item.status }}</td>
+    </tr>
+    <tr>
+        <th>Created At</th>
+        <td>{{ item.created_at }}</td>
+    </tr>
+    <tr>
+        <th>Updated At</th>
+        <td>{{ item.updated_at }}</td>
+    </tr>
+</table>
+
+<button type="button" onClick="window.location.href='{{ url_for('list_items') }}'">Back to List</button>
+
+</body>
+</html>

@@ -116,7 +116,11 @@
             </td>
             <td>{{ item.created_at }}</td>
             <td>{{ item.updated_at }}</td>
-            <td><a href="{{ url_for('edit_item', contract_no=item.contract_no) }}">Edit</a></td>
+            <td><a href="{{ url_for('edit_item', contract_no=item.contract_no) }}">Edit</a>
+                <a href="{{ url_for('view_item', contract_no=item.contract_no) }}">view</a>
+
+            
+            </td>
         </tr>
         <tr id="history-row-{{ item.form_data_id }}" class="hidden history-row">
             <td colspan="7" class="history-content">
