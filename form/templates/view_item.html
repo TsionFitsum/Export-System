@@ -30,6 +30,12 @@
         <th>Seal Image</th>
         <td>
             {% if item.seal_image %}
+                <!-- Display the file name as a clickable link -->
+                <p>File Name: 
+                    <a href="{{ url_for('uploaded_file', filename=item.seal_image) }}" target="_blank">
+                        {{ item.seal_image.rsplit('/', 1)[-1] }}
+                    </a>
+                </p>
                 <img src="{{ url_for('uploaded_file', filename=item.seal_image) }}" alt="Seal Image" style="max-width: 200px;">
             {% else %}
                 <p>No file uploaded</p>
