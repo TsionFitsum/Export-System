@@ -2,7 +2,7 @@ import json
 from flask import Flask, jsonify, render_template, request, redirect, send_from_directory, url_for
 from flask_sqlalchemy import SQLAlchemy
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta 
 from flask_apscheduler import APScheduler
 import logging
 from werkzeug.utils import secure_filename
@@ -15,7 +15,13 @@ logging.basicConfig(level=logging.DEBUG)
 # Create the Flask app
 app = Flask(__name__)
 
+# Configure Upload Folder
+UPLOAD_FOLDER = 'uploads'
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.secret_key = "supersecretkey"  # Required for flash messages
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///formdatam.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -147,7 +153,7 @@ class FormData(db.Model):
 
     # Method to check if form is expired
     def is_expired(self):
-        expiration_date = self.created_at + timedelta(days=90)  # Expire after 3 months
+        expiration_date = self.created_at + timedelta(days=1)  # Expire after 3 months
         return datetime.utcnow() > expiration_date
 
     def __repr__(self):
@@ -182,7 +188,6 @@ class FormDataHistory(db.Model):
         return f'<FormDataHistory {self.id} for FormData {self.form_data_id}>'
 
         
-
 @app.route('/list_items', methods=['GET'])
 def list_items():
     items = FormData.query.all()  # Assuming FormData contains all your item details
@@ -192,12 +197,11 @@ def list_items():
 
 
 
-# Route to display the form
+# Route to display the form 
 @app.route('/')
 def form():
     return render_template('form.html')
 
-# Route to handle form submission
 @app.route('/submit', methods=['POST'])
 def submit():
     # Retrieve form data from the request
@@ -246,15 +250,7 @@ def submit():
     ecd_number = request.form.get('ecd_number', '')
     status = request.form.get('status', '')
     remark = request.form.get('remark', '')
-
-    # Handle file uploads
-    def save_file(file):
-        if file:
-            filename = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-            file.save(filename)
-            return filename
-        return None
-
+   
     seal_image = save_file(request.files.get('seal_image'))
     undertaking_image = save_file(request.files.get('undertaking_image'))
     documentary_credit = request.form.get('documentary_credit', '')
@@ -456,6 +452,15 @@ def submit():
     return redirect(url_for('list_items'))  # Change 'success' to your success endpoint
 
 
+# Function to save uploaded files
+def save_file(file):
+    if file and file.filename:
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        file.save(filepath)
+        return file.filename  # Return just the filename, not full path
+    return None
+
+
 @app.route('/history/<int:form_data_id>/json', methods=['GET'])
 def view_history(form_data_id):
     history = FormDataHistory.query.filter_by(form_data_id=form_data_id).order_by(FormDataHistory.modified_at.desc()).all()
@@ -592,6 +597,9 @@ def edit_item(contract_no):
 
 
 
+
+
+
 def get_existing_or_new_value(form, field_name, existing_value):
     # Fetch the form value; if empty or None, fallback to existing database value
     new_value = form.get(field_name)
@@ -635,9 +643,24 @@ def view_item(contract_no):
 
     return render_template('view_item.html', item=item)
 
+# Route to handle file uploads
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    file = request.files.get('file')  # Get uploaded file
+    
+    if not file or file.filename == '':
+        return "No file selected!", 400  # Return error response
+
+    saved_filename = save_file(file)  # Save file and get filename
+    return f"File '{saved_filename}' uploaded successfully!", 200
+
+# Route to serve uploaded files
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 
 def handle_upload(file):
@@ -671,7 +694,36 @@ def check_expiring_forms():
         notify_user(form)
 
 
+
+
+
+
+
+@app.route('/delete/<contract_no>', methods=['DELETE'])
+def delete_item(contract_no):
+    item = FormData.query.filter_by(contract_no=contract_no).first()
+    if item:
+        db.session.delete(item)
+        db.session.commit()
+        return jsonify({"success": True})
+    return jsonify({"success": False, "error": "Item not found"}), 404
+
+
+
+
+
+
+
+
+
+
+
+
+
 if __name__ == '__main__':
     with app.app_context():  # Ensure that app context is available
         db.create_all()  # Create tables if they don't exist
     app.run(debug=True)
+    
+    
+    

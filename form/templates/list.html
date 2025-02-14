@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Item List</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <script>
         function toggleHistory(formDataId) {
             const historyRow = document.getElementById('history-row-' + formDataId);
-
             if (!historyRow) return;
 
             if (historyRow.classList.contains('hidden')) {
@@ -50,24 +50,49 @@
                                 `;
                             });
 
-                            historyHtml += `
-                                    </tbody>
-                                </table>
-                            `;
+                            historyHtml += `</tbody></table>`;
                             historyContent.innerHTML = historyHtml;
                         }
 
                         historyRow.classList.remove('hidden');
                     })
                     .catch(() => {
-                        const historyContent = historyRow.querySelector('.history-content');
-                        historyContent.innerHTML = '<p class="text-red-500">Error loading history data.</p>';
+                        historyRow.querySelector('.history-content').innerHTML = '<p class="text-red-500">Error loading history data.</p>';
                     });
             } else {
                 historyRow.classList.add('hidden');
             }
         }
-    </script>
+
+        function deleteItem(contractNo, button) {
+            console.log("Attempting to delete contractNo:", contractNo);
+            
+            if (!contractNo || contractNo.trim() === "") {
+                console.warn("Invalid contractNo, cannot delete.");
+                return;
+            }
+        
+            fetch(`/delete/${encodeURIComponent(contractNo)}`, {  // Ensures safe URL
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" }
+            })
+            .then(response => response.json().catch(() => ({ success: false, error: "Invalid response" })))
+            .then(data => {
+                if (data.success) {
+                    alert("Item deleted successfully.");
+                    button.closest("tr").remove();  // Remove row from UI
+                } else {
+                    alert("Error: " + (data.error || "Unknown error"));
+                }
+            })
+            .catch(error => {
+                console.error("Fetch error:", error);
+                alert("An error occurred while deleting the item.");
+            });
+        }
+        
+    </script>  
+
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
     <div class="max-w-7xl mx-auto py-8 px-4">
@@ -75,7 +100,7 @@
 
         <div class="overflow-x-auto shadow-md rounded-lg bg-white">
             <table class="min-w-full border border-gray-300">
-                <thead class="bg-green-400 text-gray-900">
+                <thead class="bg-green-500 text-gray-900">
                     <tr>
                         <th class="border px-4 py-2 text-left">No</th>
                         <th class="border px-4 py-2 text-left">Contract No</th>
@@ -96,26 +121,18 @@
                         <td class="border px-4 py-2">{{ item.buyer }}</td>
                         <td class="border px-4 py-2">{{ item.invoice_value }}</td>
                         <td class="border px-4 py-2">{{ item.seal_image }}</td>
-                        <td class="border px-4 py-2">
-                            {{ item.status }}
-                            {% if item.status == 'Expiring Soon' %}
-                                <span class="text-red-500 font-semibold ml-2">⚠️ Expiring Soon</span>
-                            {% elif item.status == 'Expired' %}
-                                <span class="text-gray-500 font-semibold ml-2">❌ Expired</span>
-                            {% endif %}
-                        </td>
+                        <td class="border px-4 py-2">{{ item.status }}</td>
                         <td class="border px-4 py-2">{{ item.created_at }}</td>
                         <td class="border px-4 py-2">{{ item.updated_at }}</td>
                         <td class="border px-4 py-2">
                             <a href="{{ url_for('edit_item', contract_no=item.contract_no) }}" class="text-blue-600 hover:underline">Edit</a>
                             <a href="{{ url_for('view_item', contract_no=item.contract_no) }}" class="text-blue-600 hover:underline ml-2">View</a>
+                            <button onclick="deleteItem('{{ item.contract_no }}', this)" class="text-red-600 hover:underline ml-2">Delete</button>
                         </td>
                     </tr>
                     <tr id="history-row-{{ item.form_data_id }}" class="hidden bg-gray-50">
                         <td colspan="9" class="px-4 py-2">
-                            <div class="history-content text-sm text-gray-700">
-                                <!-- History content will be dynamically loaded here -->
-                            </div>
+                            <div class="history-content text-sm text-gray-700"></div>
                         </td>
                     </tr>
                     {% endfor %}
