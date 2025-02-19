@@ -26,6 +26,7 @@
                                         <tr>
                                             <th class="border px-4 py-2 text-left">No</th>
                                             <th class="border px-4 py-2 text-left">Contract No</th>
+                                            <th class="border px-4 py-2 text-left">LPCO Nmuber</th>
                                             <th class="border px-4 py-2 text-left">Buyer</th>
                                             <th class="border px-4 py-2 text-left">Invoice Value</th>
                                             <th class="border px-4 py-2 text-left">Seal Image</th>
@@ -41,6 +42,7 @@
                                     <tr class="hover:bg-gray-50 even:bg-gray-100">
                                         <td class="border px-4 py-2">${item.old_data.no || 'N/A'}</td>
                                         <td class="border px-4 py-2">${item.old_data.contract_no || 'N/A'}</td>
+                                        <td class="border px-4 py-2">${item.old_data.lpco_number || 'N/A'}</td>
                                         <td class="border px-4 py-2">${item.old_data.buyer || 'N/A'}</td>
                                         <td class="border px-4 py-2">${item.old_data.invoice_value || 'N/A'}</td>
                                         <td class="border px-4 py-2">${item.old_data.seal_image || 'N/A'}</td>
@@ -98,12 +100,27 @@
     <div class="max-w-7xl mx-auto py-8 px-4">
         <h1 class="text-3xl font-bold mb-6 text-center text-green-700">Item List</h1>
 
+
+
+        <div class="mb-4">
+            <input 
+                type="text" 
+                id="searchInput" 
+                onkeyup="filterTable()" 
+                placeholder="Search by LPCO Number..." 
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
+            >
+        </div>
+
+
         <div class="overflow-x-auto shadow-md rounded-lg bg-white">
             <table class="min-w-full border border-gray-300">
                 <thead class="bg-green-500 text-gray-900">
                     <tr>
                         <th class="border px-4 py-2 text-left">No</th>
                         <th class="border px-4 py-2 text-left">Contract No</th>
+                        <th class="border px-4 py-2 text-left">LPCO No</th>
+
                         <th class="border px-4 py-2 text-left">Buyer</th>
                         <th class="border px-4 py-2 text-left">Invoice Value</th>
                         <th class="border px-4 py-2 text-left">Seal Image</th>
@@ -118,6 +135,8 @@
                     <tr class="hover:bg-gray-50 even:bg-gray-100">
                         <td class="border px-4 py-2 cursor-pointer" onclick="toggleHistory('{{ item.form_data_id }}')">{{ item.no }}</td>
                         <td class="border px-4 py-2">{{ item.contract_no }}</td>
+                        <td class="border px-4 py-2">{{ item.lpco_number }}</td>
+
                         <td class="border px-4 py-2">{{ item.buyer }}</td>
                         <td class="border px-4 py-2">{{ item.invoice_value }}</td>
                         <td class="border px-4 py-2">{{ item.seal_image }}</td>
@@ -147,5 +166,27 @@
             Back
         </button>
     </div>
+    <script>
+        function filterTable() {
+            let input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.querySelector("table");  
+            tr = table.getElementsByTagName("tr");
+    
+            for (i = 1; i < tr.length; i++) {  // Start from 1 to skip the header row
+                td = tr[i].getElementsByTagName("td")[2]; // Index 2 is for LPCO Number column
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().includes(filter)) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+    
 </body>
-</html>
+</html>      

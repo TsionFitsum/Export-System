@@ -659,8 +659,6 @@ def upload_file():
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-if __name__ == '__main__':
-    app.run(debug=True)
 
 
 def handle_upload(file):
@@ -702,11 +700,14 @@ def check_expiring_forms():
 @app.route('/delete/<contract_no>', methods=['DELETE'])
 def delete_item(contract_no):
     item = FormData.query.filter_by(contract_no=contract_no).first()
-    if item:
-        db.session.delete(item)
-        db.session.commit()
-        return jsonify({"success": True})
-    return jsonify({"success": False, "error": "Item not found"}), 404
+
+    if not item:
+        return jsonify({'success': False, 'error': 'Item not found'}), 404
+
+    db.session.delete(item)
+    db.session.commit()
+
+    return jsonify({'success': True})
 
 
 
@@ -714,6 +715,8 @@ def delete_item(contract_no):
 
 
 
+if __name__ == '__main__':
+    app.run(debug=True)
 
 
 

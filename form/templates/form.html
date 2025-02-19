@@ -172,7 +172,7 @@
                 </div>
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">LPCO Number</label>
-                    <input type="text" step="0.01" name="lpco_number" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
+                    <input type="text" step="0.01" name="lpco_number" id="lpco_number" class="w-full border border-gray-500 p-2 rounded-lg shadow-sm" required>
                 </div>
                 <!-- Horizontal rule after third pair -->
                 <div class="col-span-2">
@@ -532,7 +532,7 @@
                 }
                 return response.json();
             })
-            .then(data => {
+            .then(data => { 
                 // Handle the response data
                 if (data.exists) {
                     contractNoInput.style.borderColor = "red"; // Change border color to indicate error
